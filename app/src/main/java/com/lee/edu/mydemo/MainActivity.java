@@ -1,6 +1,7 @@
 package com.lee.edu.mydemo;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private AudioRecord audioRecord;    //录音对象
     private int recBufSize = 4400 * 2;            //定义录音片长度
     private int count = 0;
+    FrequencyPlayer FPlay;
     /**
      * 采样率（默认44100，每秒44100个点）
      */
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 声道（默认单声道）
      */
-    private int channelConfig = AudioFormat.CHANNEL_IN_STEREO;        //立体道
+    private int channelConfig = AudioFormat.CHANNEL_IN_STEREO;        //立体道  MONO单声道，STEREO立体声
     /**
      * 1s内17500hz的波值
      */
@@ -80,13 +82,77 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RequestPermission();
+        if (Build.VERSION.SDK_INT >= 23) {
+            RequestPermission();
+        }
+
 
         InitView();
 
         InitListener();
 
     }
+
+
+    private void InitView() {
+        btnPlayRecord = (Button) findViewById(R.id.btnplayrecord);
+        btnStopRecord = (Button) findViewById(R.id.btnstoprecord);
+        userSpinner = (Spinner) findViewById(R.id.spinner_user);
+        gestureSpinner = (Spinner) findViewById(R.id.spinner_gesture);
+
+        ArrayList<String> user_list = new ArrayList<String>();
+        user_list.add("XUE");
+        user_list.add("WANG");
+        user_list.add("MLI");
+        user_list.add("CAI");
+        user_list.add("WLI");
+        user_list.add("ZHANG");
+
+        ArrayAdapter userAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, user_list);
+        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        userSpinner.setAdapter(userAdapter);
+        ArrayList<String> gesture_list = new ArrayList<String>();
+        for (int i = 1; i <= 15; i++) {
+            gesture_list.add(String.valueOf((char) (i + 64)));
+        }
+        ArrayAdapter gestureAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, gesture_list);
+        gestureAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        gestureSpinner.setAdapter(gestureAdapter);
+
+        tvDist = (TextView) findViewById(R.id.textView1);
+        tvDist.setText(String.valueOf(0));
+        tvDist2 = (TextView) findViewById(R.id.textView2);
+        tvDist2.setText(String.valueOf(0));
+        btnStopRecord.setEnabled(false);    //
+
+        int minBufSize = recBufSize;      //0.1s
+
+        /*
+        public AudioRecord (int audioSource, int sampleRateInHz, int channelConfig, int audioFormat, int bufferSizeInBytes)
+        参数解释：
+        audioSource  音频源：指的是从哪里采集音频。这里我们当然是从麦克风采集音频，所以此参数的值为MIC
+        sampleRateInHz  采样率：音频的采样频率，每秒钟能够采样的次数，采样率越高，音质越高。给出的实例是
+                                                      44100、22050、11025但不限于这几个参数。例如要采集低质量的音频就可以使用4000、
+                                                      8000等低采样率。
+
+          channelConfig   声道设置：android支持双声道立体声和单声道。MONO单声道，STEREO立体声
+           audioFormat  编码制式和采样大小：采集来的数据当然使用PCM编码(脉冲代码调制编码，即PCM编码。
+                                        PCM通过抽样、量化、编码三个步骤将连续变化的模拟信号转换为数字编码。)
+                                        android支持的采样大小16bit 或者8bit。当然采样大小越大，那么信息量越多，音质也越高，
+                                        现在主流的采样大小都是16bit，在低质量的语音传输的时候8bit足够了。
+           bufferSizeInBytes  采集数据需要的缓冲区的大小，如果不知道最小需要的大小可以在getMinBufferSize()查看。
+
+
+           采集到的数据保存在一个byteBuffer中，可以使用流将其读出。亦可保存成为文件的形式
+         */
+        audioRecord = new AudioRecord(
+                MediaRecorder.AudioSource.MIC,//从麦克风采集音频
+                sampleRateInHz,//采样率，这里的值是sampleRateInHz = 44100即每秒钟采样44100次
+                channelConfig,//声道设置，MONO单声道，STEREO立体声，这里用的是立体声
+                encodingBitrate,//编码率（默认ENCODING_PCM_16BIT）
+                minBufSize);//录音片段的长度，给的是minBufSize=recBufSize = 4400 * 2;
+    }
+
 
     private void InitListener() {
         //17500Hz的波形
@@ -125,49 +191,11 @@ public class MainActivity extends AppCompatActivity {
                 // TODO 自动生成的方法存根
                 btnPlayRecord.setEnabled(true);
                 btnStopRecord.setEnabled(false);
+                FPlay.colseWaveZ();
                 flag = false;
             }
         });
     }
-
-    private void InitView() {
-        btnPlayRecord = (Button) findViewById(R.id.btnplayrecord);
-        btnStopRecord = (Button) findViewById(R.id.btnstoprecord);
-        userSpinner = (Spinner) findViewById(R.id.spinner_user);
-        gestureSpinner = (Spinner) findViewById(R.id.spinner_gesture);
-
-        ArrayList<String> user_list = new ArrayList<String>();
-        user_list.add("XUE");
-        user_list.add("WANG");
-        user_list.add("MLI");
-        user_list.add("CAI");
-        user_list.add("WLI");
-        user_list.add("ZHANG");
-
-        ArrayAdapter userAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, user_list);
-        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        userSpinner.setAdapter(userAdapter);
-        ArrayList<String> gesture_list = new ArrayList<String>();
-        for (int i = 1; i <= 15; i++) {
-            gesture_list.add(String.valueOf((char) (i + 64)));
-        }
-        ArrayAdapter gestureAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, gesture_list);
-        gestureAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        gestureSpinner.setAdapter(gestureAdapter);
-
-        tvDist = (TextView) findViewById(R.id.textView1);
-        tvDist.setText(String.valueOf(0));
-        tvDist2 = (TextView) findViewById(R.id.textView2);
-        tvDist2.setText(String.valueOf(0));
-        btnStopRecord.setEnabled(false);    //
-
-        int minBufSize = recBufSize;      //0.1s
-        audioRecord = new AudioRecord(
-                MediaRecorder.AudioSource.MIC, sampleRateInHz,
-                channelConfig,
-                encodingBitrate, minBufSize);
-    }
-
 
     /**
      * 即时播放线程
@@ -177,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
     class ThreadInstantPlay extends Thread {
         @Override
         public void run() {
-            FrequencyPlayer FPlay = new FrequencyPlayer(numfre, Freqarrary);
+            FPlay = new FrequencyPlayer(numfre, Freqarrary);
             FPlay.palyWaveZ();
             while (flag) {
             }
@@ -191,20 +219,26 @@ public class MainActivity extends AppCompatActivity {
     class ThreadInstantRecord extends Thread {
         @Override
         public void run() {
-            short[] bsRecord = new short[recBufSize];
+            short[] bsRecord = new short[recBufSize];//recBufSize=4400*2
+
             short[] bsRecordL = new short[recBufSize / 2];
             short[] bsRecordR = new short[recBufSize / 2];
+
             short[] BIGDATA = new short[44100 * 30];
             short[] BIGDATA2 = new short[44100 * 30];
+
             double[] BIGDATAIIL = new double[44100 * 30];//这边4个从1开始取 注意+1
             double[] BIGDATAQQL = new double[44100 * 30];
+
             double[] BIGDATAIIR = new double[44100 * 30];
             double[] BIGDATAQQR = new double[44100 * 30];
             //八个频率调整好的数据
             double[] needIL = new double[880 + 2];
             double[] needQL = new double[880 + 2];
+
             double[] needIR = new double[880 + 2];
             double[] needQR = new double[880 + 2];
+
             int n = 0;
             double totPhase = 0;
             double lastDist = 0;
@@ -217,40 +251,95 @@ public class MainActivity extends AppCompatActivity {
             }
             try {
                 audioRecord.startRecording();
+
             } catch (IllegalStateException e) {
                 // 录音开始失败
+                Toast.makeText(MainActivity.this,"录音开始失败！",Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
                 return;
             }
             //Log.w("tip","start");
             int Len;
+            long start = System.currentTimeMillis();
             while (flag)//大循环
             {
-                Len = audioRecord.read(bsRecord, 0, recBufSize);//读取录音
+
+                long end = System.currentTimeMillis();
+                if (end - start >= 3000) {
+                    flag = false;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            FPlay.colseWaveZ();
+                            btnPlayRecord.setEnabled(true);
+                            btnStopRecord.setEnabled(false);
+
+                        }
+                    });
+
+                }
+
+
+                //读取录音
+                // short[] bsRecord = new short[recBufSize];//recBufSize=4400*2
+
+                Len = audioRecord.read(bsRecord, 0, recBufSize);
+                /*
+                public int read (short[] audioData, int offsetInShorts, int sizeInShorts)     从音频硬件录制缓冲区读取数据。
+
+           　　参数:
+
+                            audioData        写入的音频录制数据。
+
+                            offsetInShorts           目标数组 audioData 的起始偏移量。
+
+                            sizeInShorts              请求读取的数据大小。
+
+　　　　　　返回值:
+　　                  返回short型数据，表示读取到的数据，如果对象属性没有初始化，则返回ERROR_INVALID_OPERATION，
+                            如果参数不能解析成有效的数据或索引，则返回ERROR_BAD_VALUE。 返回数值不会超过sizeInShorts。
+                 */
+
+                /*
+                BIGDATA记录的是整个手势的过程中产生的数据
+                bsRecord记录的是单个循环中产生的数据
+                 */
+                //将读到数据的L和R分开
                 for (int i = 0; i < Len; i++) {
                     BIGDATA[n] = bsRecord[i];
                     bsRecordL[i / 2] = bsRecord[i++];
+
                     BIGDATA2[n++] = bsRecord[i];
                     bsRecordR[i / 2] = bsRecord[i];
                 }
+
                 double[] di = new double[110];
                 //-----------------------你们需要的数据就是这个tempII 和tempQQ------------------------------------
                 //-------------------------下面有保存方法saveToSDCard ，你们可以自己试着按照你们的需要保存----------------------------------
                 double[] tempIIL = new double[880];
                 double[] tempQQL = new double[880];
+
                 DemoL(bsRecordL, di, tempIIL, tempQQL);
                 lastDist = di[110 - 1];
 
                 double[] tempIIR = new double[880];
                 double[] tempQQR = new double[880];
                 DemoR(bsRecordR, di, tempIIR, tempQQR);
+
+
+
+                /*
+                做的存储数据的操作
+                 */
                 int nn = 1;
                 for (int i = 0; i < 880; i++, nn++) {   //为了让数据从1开始
                     BIGDATAIIL[nn] = tempIIL[i];
                     BIGDATAQQL[nn] = tempQQL[i];
+
                     BIGDATAIIR[nn] = tempIIR[i];
                     BIGDATAQQR[nn] = tempQQR[i];
                 }
+
                 //这边得用BIGDATAIIL的数据
                 for (int i = 1; i <= 880; i++) {
                     int j = i / 8;//第几个8
@@ -261,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
                     needIR[(k - 1) * 110 + j + 1] = BIGDATAIIR[i];
                     needQR[(k - 1) * 110 + j + 1] = BIGDATAQQR[i];
                 }
+
                 for (int i = 880 - 110 + 1; i < 880; i++) {
                     needIL[i] = needIL[i + 1];
                     needQL[i] = needIL[i + 1];
@@ -311,11 +401,11 @@ public class MainActivity extends AppCompatActivity {
                 String filePath = Environment.getExternalStorageDirectory() + "/ASSET" + "/" + user + "/" + gesture + "/";
                 String temp = user + "_" + gesture + "_";
                 //还没与学长原本的波形比较
-                SaveFile saveFile1=new SaveFile(temp + "I_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needIL, 880);
-                SaveFile saveFile2=new SaveFile(temp + "Q_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needQL, 880);
+                SaveFile saveFile1 = new SaveFile(temp + "I_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needIL, 880);
+                SaveFile saveFile2 = new SaveFile(temp + "Q_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needQL, 880);
                 channel = "Right";
-                SaveFile saveFile3=new SaveFile(temp + "I_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needIR, 880);
-                SaveFile saveFile4=new SaveFile(temp + "Q_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needQR, 880);
+                SaveFile saveFile3 = new SaveFile(temp + "I_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needIR, 880);
+                SaveFile saveFile4 = new SaveFile(temp + "Q_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needQR, 880);
 
                 saveFile1.execute("");
                 saveFile2.execute("");
@@ -338,12 +428,12 @@ public class MainActivity extends AppCompatActivity {
             PermissionsUtil.requestPermission(MainActivity.this, new PermissionListener() {
                 @Override
                 public void permissionGranted(@NonNull String[] permission) {
-                //用户授予了权限
+                    //用户授予了权限
                 }
 
                 @Override
                 public void permissionDenied(@NonNull String[] permission) {
-                //用户拒绝了权限
+                    //用户拒绝了权限
                     Toast.makeText(MainActivity.this, "相关权限被拒绝，本应用将无法正常运行", Toast.LENGTH_SHORT).show();
                 }
             }, permissions);
