@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 /**
  * Created by dmrf on 18-1-25.
@@ -17,14 +18,13 @@ public class SaveFile extends AsyncTask<String, Void, Void> {
 
     private String filename;
     private String filepath;
-    private double[] content;
+    private ArrayList<Double>content[];
     private int length;
 
-    public SaveFile(String filename, String filepath, double[] content, int length) {
+    public SaveFile(String filename, String filepath, ArrayList<Double> content[]) {
         this.filename = filename;
         this.filepath = filepath;
         this.content = content;
-        this.length = length;
     }
 
 
@@ -39,11 +39,13 @@ public class SaveFile extends AsyncTask<String, Void, Void> {
                 dir.mkdirs();
                 file.createNewFile();
             }
-            outStream = new FileOutputStream(file);
+            outStream = new FileOutputStream(file,true);
             OutputStreamWriter writer = new OutputStreamWriter(outStream, "gb2312");
-            for (int i = 1; i <= length; i++) {
-                writer.write(String.valueOf(content[i]));//这边改成浮点型不知道会不会出错
-                writer.write("\n");
+            for (int i=0;i<8;i++){
+                for (int j=0;j<content[i].size();j++){
+                    writer.write(String.valueOf(content[i].get(j)));//这边改成浮点型不知道会不会出错
+                    writer.write("\n");
+                }
             }
             writer.close();
             outStream.close();

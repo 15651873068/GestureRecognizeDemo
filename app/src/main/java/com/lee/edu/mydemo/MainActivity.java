@@ -30,6 +30,12 @@ import com.github.dfqin.grantor.PermissionListener;
 import com.github.dfqin.grantor.PermissionsUtil;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ArrayList<Double> L_I[];
+    private ArrayList<Double> L_Q[];
+    private ArrayList<Double> R_I[];
+    private ArrayList<Double> R_Q[];
+
     private double[] Freqarrary = {17500, 17850, 18200, 18550, 18900, 19250, 19600, 19950, 20300, 20650};        //设置播放频率
     private int numfre = 8;
     private Button btnPlayRecord;        //开始按钮
@@ -86,10 +92,29 @@ public class MainActivity extends AppCompatActivity {
             RequestPermission();
         }
 
-
+        InitData();
         InitView();
 
         InitListener();
+
+    }
+
+    private void InitData() {
+
+        L_I = new ArrayList[8];
+        L_Q = new  ArrayList[8];
+        R_I = new  ArrayList[8];
+        R_Q = new  ArrayList[8];
+        for (int i=0;i<8;i++){
+            ArrayList<Double> list1=new ArrayList<Double>();
+            ArrayList<Double> list2=new ArrayList<Double>();
+            ArrayList<Double> list3=new ArrayList<Double>();
+            ArrayList<Double> list4=new ArrayList<Double>();
+            L_I[i]=list1;
+            L_Q[i]=list2;
+            R_I[i]=list3;
+            R_Q[i]=list4;
+        }
 
     }
 
@@ -166,6 +191,20 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 btnPlayRecord.setEnabled(false);
                 btnStopRecord.setEnabled(true);
+
+
+                if (L_I[0]!=null){
+                    for (int i=0;i<8;i++){
+                        L_I[i].clear();
+                        L_Q[i].clear();
+                        R_I[i].clear();
+                        R_Q[i].clear();
+                    }
+                }
+
+
+
+
                 count++;
                 flag = true;
                 new ThreadInstantPlay().start();        //播放(发射超声波)
@@ -254,13 +293,23 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (IllegalStateException e) {
                 // 录音开始失败
-                Toast.makeText(MainActivity.this,"录音开始失败！",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "录音开始失败！", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
                 return;
             }
             //Log.w("tip","start");
             int Len;
             long start = System.currentTimeMillis();
+
+            Calendar c = Calendar.getInstance();
+            int mDay = c.get(Calendar.DAY_OF_MONTH);//日期
+            int mHour = c.get(Calendar.HOUR_OF_DAY);//时
+            int mMinute = c.get(Calendar.MINUTE);//分
+            int mSecond = c.get(Calendar.SECOND);//秒
+            String user = (String) userSpinner.getSelectedItem();
+            String gesture = (String) gestureSpinner.getSelectedItem();
+
+
             while (flag)//大循环
             {
 
@@ -284,6 +333,7 @@ public class MainActivity extends AppCompatActivity {
                 // short[] bsRecord = new short[recBufSize];//recBufSize=4400*2
 
                 Len = audioRecord.read(bsRecord, 0, recBufSize);
+
                 /*
                 public int read (short[] audioData, int offsetInShorts, int sizeInShorts)     从音频硬件录制缓冲区读取数据。
 
@@ -304,6 +354,16 @@ public class MainActivity extends AppCompatActivity {
                 BIGDATA记录的是整个手势的过程中产生的数据
                 bsRecord记录的是单个循环中产生的数据
                  */
+//
+
+                /*
+                降噪（高通滤波）
+                 */
+
+
+                System.out.println(Len);
+
+
                 //将读到数据的L和R分开
                 for (int i = 0; i < Len; i++) {
                     BIGDATA[n] = bsRecord[i];
@@ -313,6 +373,7 @@ public class MainActivity extends AppCompatActivity {
                     bsRecordR[i / 2] = bsRecord[i];
                 }
 
+
                 double[] di = new double[110];
                 //-----------------------你们需要的数据就是这个tempII 和tempQQ------------------------------------
                 //-------------------------下面有保存方法saveToSDCard ，你们可以自己试着按照你们的需要保存----------------------------------
@@ -320,52 +381,31 @@ public class MainActivity extends AppCompatActivity {
                 double[] tempQQL = new double[880];
 
                 DemoL(bsRecordL, di, tempIIL, tempQQL);
+                AddDataToList(L_I,tempIIL);
+                AddDataToList(L_Q,tempQQL);
+
                 lastDist = di[110 - 1];
 
                 double[] tempIIR = new double[880];
                 double[] tempQQR = new double[880];
                 DemoR(bsRecordR, di, tempIIR, tempQQR);
+                AddDataToList(R_I,tempIIR);
+                AddDataToList(R_Q,tempQQR);
 
 
 
                 /*
                 做的存储数据的操作
                  */
-                int nn = 1;
-                for (int i = 0; i < 880; i++, nn++) {   //为了让数据从1开始
-                    BIGDATAIIL[nn] = tempIIL[i];
-                    BIGDATAQQL[nn] = tempQQL[i];
 
-                    BIGDATAIIR[nn] = tempIIR[i];
-                    BIGDATAQQR[nn] = tempQQR[i];
-                }
-
-                //这边得用BIGDATAIIL的数据
-                for (int i = 1; i <= 880; i++) {
-                    int j = i / 8;//第几个8
-                    int k = i % 8;   //除8的余数
-                    if (k == 0) k = 8;//
-                    needIL[(k - 1) * 110 + j + 1] = BIGDATAIIL[i];
-                    needQL[(k - 1) * 110 + j + 1] = BIGDATAQQL[i];
-                    needIR[(k - 1) * 110 + j + 1] = BIGDATAIIR[i];
-                    needQR[(k - 1) * 110 + j + 1] = BIGDATAQQR[i];
-                }
-
-                for (int i = 880 - 110 + 1; i < 880; i++) {
-                    needIL[i] = needIL[i + 1];
-                    needQL[i] = needIL[i + 1];
-                    needIR[i] = needIL[i + 1];
-                    needQR[i] = needIL[i + 1];
-                }
-                needIL[880] = BIGDATAIIL[880];
-                needQL[880] = BIGDATAQQL[880];
-                needIR[880] = BIGDATAIIR[880];
-                needQR[880] = BIGDATAQQR[880];
 
                 lastDistR = di[110 - 1];
                 NowPhase += totPhase / 2;
                 while (NowPhase < 0) NowPhase += Math.PI * 2;
                 while (NowPhase > Math.PI * 2) NowPhase -= Math.PI * 2;
+
+
+
 
                 Message msg1 = new Message();
                 msg1.what = 1;
@@ -380,42 +420,60 @@ public class MainActivity extends AppCompatActivity {
                 msg2.obj = (df.format(lastDistR));
                 mHandler.sendMessage(msg2);
             }//while end
+
+
+            String channel = "Left";
+            String cnt = String.valueOf(count);
+            String filePath = Environment.getExternalStorageDirectory() + "/ASSET" + "/" + user + "/" + gesture + "/";
+            String temp = user + "_" + gesture + "_";
+            //还没与学长原本的波形比较
+            SaveFile saveFile1 = new SaveFile(temp + "I_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", L_I);
+            SaveFile saveFile2 = new SaveFile(temp + "Q_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", L_Q);
+            channel = "Right";
+            SaveFile saveFile3 = new SaveFile(temp + "I_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", R_I);
+            SaveFile saveFile4 = new SaveFile(temp + "Q_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", R_Q);
+
+            saveFile1.execute("");
+            saveFile2.execute("");
+            saveFile3.execute("");
+            saveFile4.execute("");
+
+
             audioRecord.stop();
-            // Log.w("tip","stop");
-            try {
-                //long a =System.currentTimeMillis();
 
-                //这边还没调试，出错的话可能在这
-                Calendar c = Calendar.getInstance();
-                int mDay = c.get(Calendar.DAY_OF_MONTH);//日期
-                int mHour = c.get(Calendar.HOUR_OF_DAY);//时
-                int mMinute = c.get(Calendar.MINUTE);//分
-                int mSecond = c.get(Calendar.SECOND);//秒
 
-                // saveToSDCard("001"+a+".txt",BIGDATA,n);
-                //saveToSDCard("002"+a+".txt",BIGDATA2,n);
-                String user = (String) userSpinner.getSelectedItem();
-                String gesture = (String) gestureSpinner.getSelectedItem();
-                String channel = "Left";
-                String cnt = String.valueOf(count);
-                String filePath = Environment.getExternalStorageDirectory() + "/ASSET" + "/" + user + "/" + gesture + "/";
-                String temp = user + "_" + gesture + "_";
-                //还没与学长原本的波形比较
-                SaveFile saveFile1 = new SaveFile(temp + "I_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needIL, 880);
-                SaveFile saveFile2 = new SaveFile(temp + "Q_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needQL, 880);
-                channel = "Right";
-                SaveFile saveFile3 = new SaveFile(temp + "I_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needIR, 880);
-                SaveFile saveFile4 = new SaveFile(temp + "Q_" + mDay + mHour + mMinute + mSecond + ".txt", filePath + channel + "/", needQR, 880);
+        }
 
-                saveFile1.execute("");
-                saveFile2.execute("");
-                saveFile3.execute("");
-                saveFile4.execute("");
+    }
 
-            } catch (Exception e) {
-                e.printStackTrace();
+    private void AddDataToList(ArrayList<Double>[] list, double[] data) {
+        if (data.length!=880){
+            Toast.makeText(MainActivity.this,"出现了未知bug，请联系小五改bug！",Toast.LENGTH_SHORT).show();
+            btnPlayRecord.setEnabled(true);
+            btnStopRecord.setEnabled(false);
+            FPlay.colseWaveZ();
+            flag = false;
+            return;
+        }
+
+        boolean all_zero_flag=true;
+        for (int i=0;i<880;i++){
+            if (data[i]!=0){
+                all_zero_flag=false;
             }
         }
+
+        if (all_zero_flag){
+            return;
+        }
+        int count=-1;
+        for (int i=0;i<880;i++){
+            if (i%110==0){
+                count++;
+            }
+            list[count].add(data[i]);
+       }
+
 
     }
 
