@@ -5,6 +5,7 @@
 
 #include "mycic/MyCic.h"
 #include "sup/support.cpp"
+#include"MyFilter/my_filter.cpp"
 
 #define TAG    "myjni-test" // 这个是自定义的LOG的标识
 #define LOGW(...) __android_log_print(ANDROID_LOG_WARN,TAG ,__VA_ARGS__) // 定义LOGW类型
@@ -25,7 +26,26 @@ Java_com_lee_edu_mydemo_MainActivity_stringFromJNI(
 }
 
 
+extern"C"
+JNIEXPORT void
+Java_com_lee_edu_mydemo_MainActivity_myFilter(
+        JNIEnv *env,
+        jobject /* this */,
+        jdoubleArray HN,
+        jdoubleArray X,
+        jdoubleArray Y
+){
+       jdouble *hn=(env)->GetDoubleArrayElements(HN,0);
+       jdouble *x=(env)->GetDoubleArrayElements(X,0);
+       jdouble *y=(env)->GetDoubleArrayElements(Y,0);
 
+       my_filter(hn,1,x,y);
+
+       (env)->ReleaseDoubleArrayElements(Y,y,0);
+       (env)->ReleaseDoubleArrayElements(X,x,0);
+       (env)->ReleaseDoubleArrayElements(HN,hn,0);
+
+}
 
 extern "C"
 JNIEXPORT void

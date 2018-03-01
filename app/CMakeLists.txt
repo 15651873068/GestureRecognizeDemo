@@ -86,10 +86,27 @@ add_library( LEVD
 add_library( Peak
              SHARED
              src/main/cpp/sup/Peak.cpp )
+
 add_library( support
              SHARED
              src/main/cpp/sup/support.cpp )
 
+add_library( my_filter
+             SHARED
+             src/main/cpp/MyFilter/my_filter.cpp )
+
+
+add_library( rt_nonfinite4
+             SHARED
+             src/main/cpp/MyFilter/rt_nonfinite.cpp )
+
+add_library( rtGetInf4
+             SHARED
+             src/main/cpp/MyFilter/rtGetInf.cpp )
+
+add_library( rtGetNaN4
+             SHARED
+             src/main/cpp/MyFilter/rtGetNaN.cpp )
 
 
 
@@ -135,6 +152,7 @@ target_link_libraries( # Specifies the target library.
                        ${log-lib}
                        rtGetNaN
                        rtGetInf )
+
 target_link_libraries( # Specifies the target library.
                        MyCic_initialize
 
@@ -178,6 +196,18 @@ target_link_libraries( # Specifies the target library.
                        rtGetNaN3
                        rtGetInf3)
 
+  target_link_libraries( # Specifies the target library.
+                            rt_nonfinite4
+
+                            # Links the target library to the log library
+                            # included in the NDK.
+                            ${log-lib}
+                            rtGetNaN4
+                            rtGetInf4
+                            )
+
+
+
 target_link_libraries( # Specifies the target library.
                        ADist
 
@@ -185,6 +215,13 @@ target_link_libraries( # Specifies the target library.
                        # included in the NDK.
                        ${log-lib}
                        rt_nonfinite3)
+target_link_libraries( # Specifies the target library.
+
+                        my_filter
+                       # Links the target library to the log library
+                       # included in the NDK.
+                       ${log-lib}
+                       rt_nonfinite4)
 
 target_link_libraries( # Specifies the target library.
                        support
@@ -205,4 +242,5 @@ target_link_libraries( # Specifies the target library.
                        ${log-lib}
                        MyCic
                        ADist
-                       support)
+                       support
+                       my_filter)
