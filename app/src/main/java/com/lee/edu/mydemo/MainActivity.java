@@ -360,7 +360,15 @@ public class MainActivity extends AppCompatActivity {
                 /*
                 降噪（带通滤波）
 
-                 */
+                */
+/*
+                //对bsRecord进行备份
+                short[] bs = new short[recBufSize];
+
+                for (int i=0;i<bsRecord.length;i++){
+                    bs[i]=bsRecord[i];
+                }
+
 
                 double[] bsRecord2 = new double[recBufSize ];
                 double[] after_bsRecord = new double[recBufSize ];
@@ -369,15 +377,15 @@ public class MainActivity extends AppCompatActivity {
                     bsRecord2[i]=bsRecord[i];
                 }
 
-                myFilter(hn,bsRecord2,after_bsRecord);
+                //myFilter(hn,bsRecord2,after_bsRecord);
 
                 for (int i=0;i<after_bsRecord.length;i++){
                     bsRecord[i]= (short) after_bsRecord[i];
                 }
 
 
-                System.out.println(Len);
 
+*/
 
                 //将读到数据的L和R分开
                 for (int i = 0; i < Len; i++) {
@@ -400,6 +408,34 @@ public class MainActivity extends AppCompatActivity {
                 AddDataToList(L_I,tempIIL);
                 AddDataToList(L_Q,tempQQL);
 
+//
+//
+//                short[] bsRecordL2 = new short[recBufSize / 2];
+//                short[] bsRecordR2= new short[recBufSize / 2];
+//
+//                short[] BIGDATAa = new short[44100 * 30];
+//                short[] BIGDATA2a = new short[44100 * 30];
+//                //将读到数据的L和R分开
+//                for (int i = 0; i < Len; i++) {
+//                    BIGDATAa[n] = bs[i];
+//                    bsRecordL2[i / 2] = bs[i++];
+//
+//                    BIGDATA2a[n++] = bs[i];
+//                    bsRecordR2[i / 2] = bs[i];
+//                }
+//
+//
+//                double[] di2 = new double[110];
+//                //-----------------------你们需要的数据就是这个tempII 和tempQQ------------------------------------
+//                //-------------------------下面有保存方法saveToSDCard ，你们可以自己试着按照你们的需要保存----------------------------------
+//                double[] tempIIL2 = new double[880];
+//                double[] tempQQL2 = new double[880];
+//
+//
+//                DemoL(bsRecordL2, di2, tempIIL2, tempQQL2);
+//                AddDataToList(R_I,tempIIL2);
+//                AddDataToList(R_Q,tempQQL2);
+
 
 
                 lastDist = di[110 - 1];
@@ -407,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
                 double[] tempIIR = new double[880];
                 double[] tempQQR = new double[880];
                 DemoR(bsRecordR, di, tempIIR, tempQQR);
-                AddDataToList(R_I,tempIIR);
+               AddDataToList(R_I,tempIIR);
                 AddDataToList(R_Q,tempQQR);
 
 
