@@ -446,6 +446,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     //本地方法，由java调用
     public native String stringFromJNI(int[] I);
 

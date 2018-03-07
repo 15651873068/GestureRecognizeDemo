@@ -21,22 +21,21 @@ import java.util.Calendar;
 
 public class SaveFile extends AsyncTask<String, Void, Void> {
 
-    public SaveFile(ArrayList<Double>[] l_i, ArrayList<Double>[] l_q, ArrayList<Double>[] r_i, ArrayList<Double>[] r_q, Button start,Context context) {
+    public SaveFile(ArrayList<Double>[] l_i, ArrayList<Double>[] l_q, ArrayList<Double>[] r_i, ArrayList<Double>[] r_q, Button start, Context context) {
         this.l_i = l_i;
         this.l_q = l_q;
         this.r_i = r_i;
         this.r_q = r_q;
         this.start = start;
-        this.context=context;
+        this.context = context;
     }
 
     private ArrayList<Double> l_i[];
-    private  ArrayList<Double> l_q[];
+    private ArrayList<Double> l_q[];
     private ArrayList<Double> r_i[];
     private ArrayList<Double> r_q[];
     private Button start;
     private Context context;
-
 
 
     @Override
@@ -62,7 +61,6 @@ public class SaveFile extends AsyncTask<String, Void, Void> {
         FileOutputStream outStream_l_q = null;
         FileOutputStream outStream_r_i = null;
         FileOutputStream outStream_r_q = null;
-
 
 
         try {
@@ -91,9 +89,6 @@ public class SaveFile extends AsyncTask<String, Void, Void> {
             }
 
 
-
-
-
             outStream_l_i = new FileOutputStream(file_l_i, true);
             outStream_l_q = new FileOutputStream(file_l_q, true);
             outStream_r_i = new FileOutputStream(file_r_i, true);
@@ -104,41 +99,27 @@ public class SaveFile extends AsyncTask<String, Void, Void> {
             OutputStreamWriter writer_r_i = new OutputStreamWriter(outStream_r_i, "gb2312");
             OutputStreamWriter writer_r_q = new OutputStreamWriter(outStream_r_q, "gb2312");
 
-            int len=l_i[0].size();
+            int len = l_i[0].size();
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < len; j++) {
                     writer_l_i.write(String.valueOf(l_i[i].get(j)));//这边改成浮点型不知道会不会出错
                     writer_l_i.write("\n");
-                }
-            }
-            writer_l_i.close();
-            outStream_l_i.close();
-
-
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j <len; j++) {
                     writer_l_q.write(String.valueOf(l_q[i].get(j)));//这边改成浮点型不知道会不会出错
                     writer_l_q.write("\n");
-                }
-            }
-            writer_l_q.close();
-            outStream_l_q.close();
-
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < len; j++) {
                     writer_r_i.write(String.valueOf(r_i[i].get(j)));//这边改成浮点型不知道会不会出错
                     writer_r_i.write("\n");
-                }
-            }
-            writer_r_i.close();
-            outStream_r_i.close();
-
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < len; j++) {
                     writer_r_q.write(String.valueOf(r_q[i].get(j)));//这边改成浮点型不知道会不会出错
                     writer_r_q.write("\n");
+
                 }
             }
+
+            writer_l_i.close();
+            outStream_l_i.close();
+            writer_l_q.close();
+            outStream_l_q.close();
+            writer_r_i.close();
+            outStream_r_i.close();
             writer_r_q.close();
             outStream_r_q.close();
 
