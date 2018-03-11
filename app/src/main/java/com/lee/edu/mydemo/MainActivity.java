@@ -5,10 +5,20 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,10 +41,12 @@ import com.github.dfqin.grantor.PermissionsUtil;
 
 public class MainActivity extends AppCompatActivity {
 
+    private int PORT = 9999;
     private ArrayList<Double> L_I[];
     private ArrayList<Double> L_Q[];
     private ArrayList<Double> R_I[];
     private ArrayList<Double> R_Q[];
+    private EditText port;
 
     //private double[] hn={1.32392485717860e-17,0.000115348756115463,-6.40479811326745e-05,-0.000113849593068010,0.000294794672544525,-0.000344715436891353,0.000203341490694876,7.13479318013532e-05,-0.000330092779539561,0.000421003629037944,-0.000289752301308973,2.72567337634625e-05,0.000173455842498608,-0.000134654939069100,-0.000183178174843267,0.000635541676439271,-0.000967540926390406,0.000973666364118551,-0.000646061633772521,0.000207051202821724,1.33504895444139e-05,0.000207918279038628,-0.000816434477363261,0.00147891769061596,-0.00177562804828214,0.00147915776559994,-0.000737011179203493,1.77310478737339e-05,0.000173308556253336,0.000359320996689380,-0.00132505884156354,0.00208628479686516,-0.00205531610610657,0.00110587089694908,0.000284597446654840,-0.00129273308493972,0.00127634853818980,-0.000237817630376427,-0.00110368785920677,0.00172562495448762,-0.000970911234535473,-0.000959984986457267,0.00305161687657250,-0.00407955900538719,0.00342422375234766,-0.00155635376448883,-0.000172926955072533,0.000365965971666594,0.00146988569914412,-0.00449136384142342,0.00695579306666937,-0.00731403383162508,0.00528004102507643,-0.00214624476927830,5.63063360004445e-05,-0.000628448834849798,0.00380217368937921,-0.00771317503318496,0.00978003419791167,-0.00838158330365509,0.00404441643245969,0.000710435132315745,-0.00288539936385394,0.000991696470984025,0.00379580534441449,-0.00817392940249363,0.00873701070292518,-0.00426906663805527,-0.00321828093669407,0.00952392229774093,-0.0108753276811255,0.00651960447500590,0.000459143107166961,-0.00482533288429571,0.00250379988661722,0.00653746196856346,-0.0178141110848804,0.0248389137494424,-0.0232664010038889,0.0140783807638762,-0.00357055610707002,-0.000229430104931582,-0.00723904779459944,0.0235063092910961,-0.0397192780738844,0.0456376883731511,-0.0363008812946162,0.0162480702265513,0.00181527709495167,-0.00391638420629608,-0.0161922196368271,0.0511841902229981,-0.0814880805427176,0.0840793424737467,-0.0447154245431828,-0.0328032934024797,0.125722347926422,-0.201025230233503,0.229914930355158,-0.201025230233503,0.125722347926422,-0.0328032934024797,-0.0447154245431828,0.0840793424737467,-0.0814880805427176,0.0511841902229981,-0.0161922196368271,-0.00391638420629608,0.00181527709495167,0.0162480702265513,-0.0363008812946162,0.0456376883731511,-0.0397192780738844,0.0235063092910961,-0.00723904779459944,-0.000229430104931582,-0.00357055610707002,0.0140783807638762,-0.0232664010038889,0.0248389137494424,-0.0178141110848804,0.00653746196856346,0.00250379988661722,-0.00482533288429571,0.000459143107166961,0.00651960447500590,-0.0108753276811255,0.00952392229774093,-0.00321828093669407,-0.00426906663805527,0.00873701070292518,-0.00817392940249363,0.00379580534441449,0.000991696470984025,-0.00288539936385394,0.000710435132315745,0.00404441643245969,-0.00838158330365509,0.00978003419791167,-0.00771317503318496,0.00380217368937921,-0.000628448834849798,5.63063360004445e-05,-0.00214624476927830,0.00528004102507643,-0.00731403383162508,0.00695579306666937,-0.00449136384142342,0.00146988569914412,0.000365965971666594,-0.000172926955072533,-0.00155635376448883,0.00342422375234766,-0.00407955900538719,0.00305161687657250,-0.000959984986457267,-0.000970911234535473,0.00172562495448762,-0.00110368785920677,-0.000237817630376427,0.00127634853818980,-0.00129273308493972,0.000284597446654840,0.00110587089694908,-0.00205531610610657,0.00208628479686516,-0.00132505884156354,0.000359320996689380,0.000173308556253336,1.77310478737339e-05,-0.000737011179203493,0.00147915776559994,-0.00177562804828214,0.00147891769061596,-0.000816434477363261,0.000207918279038628,1.33504895444139e-05,0.000207051202821724,-0.000646061633772521,0.000973666364118551,-0.000967540926390406,0.000635541676439271,-0.000183178174843267,-0.000134654939069100,0.000173455842498608,2.72567337634625e-05,-0.000289752301308973,0.000421003629037944,-0.000330092779539561,7.13479318013532e-05,0.000203341490694876,-0.000344715436891353,0.000294794672544525,-0.000113849593068010,-6.40479811326745e-05,0.000115348756115463,1.32392485717860e-17};
     private double[] Freqarrary = {17500, 17850, 18200, 18550, 18900, 19250, 19600, 19950, 20300, 20650};        //设置播放频率
@@ -48,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private int recBufSize = 4400 * 2;            //定义录音片长度
     private int count = 0;
     FrequencyPlayer FPlay;
+    Socket socket = null;
+    PrintWriter out;
     /**
      * 采样率（默认44100，每秒44100个点）
      */
@@ -101,27 +115,28 @@ public class MainActivity extends AppCompatActivity {
     private void InitData() {
 
         L_I = new ArrayList[8];
-        L_Q = new  ArrayList[8];
-        R_I = new  ArrayList[8];
-        R_Q = new  ArrayList[8];
-        for (int i=0;i<8;i++){
-            ArrayList<Double> list1=new ArrayList<Double>();
-            ArrayList<Double> list2=new ArrayList<Double>();
-            ArrayList<Double> list3=new ArrayList<Double>();
-            ArrayList<Double> list4=new ArrayList<Double>();
-            L_I[i]=list1;
-            L_Q[i]=list2;
-            R_I[i]=list3;
-            R_Q[i]=list4;
+        L_Q = new ArrayList[8];
+        R_I = new ArrayList[8];
+        R_Q = new ArrayList[8];
+        for (int i = 0; i < 8; i++) {
+            ArrayList<Double> list1 = new ArrayList<Double>();
+            ArrayList<Double> list2 = new ArrayList<Double>();
+            ArrayList<Double> list3 = new ArrayList<Double>();
+            ArrayList<Double> list4 = new ArrayList<Double>();
+            L_I[i] = list1;
+            L_Q[i] = list2;
+            R_I[i] = list3;
+            R_Q[i] = list4;
         }
 
     }
 
 
     private void InitView() {
+        port = (EditText) findViewById(R.id.port);
+
         btnPlayRecord = (Button) findViewById(R.id.btnplayrecord);
         btnStopRecord = (Button) findViewById(R.id.btnstoprecord);
-
 
 
         tvDist = (TextView) findViewById(R.id.textView1);
@@ -173,8 +188,10 @@ public class MainActivity extends AppCompatActivity {
                 btnStopRecord.setEnabled(true);
 
 
-                if (L_I[0]!=null){
-                    for (int i=0;i<8;i++){
+
+
+                if (L_I[0] != null) {
+                    for (int i = 0; i < 8; i++) {
                         L_I[i].clear();
                         L_Q[i].clear();
                         R_I[i].clear();
@@ -182,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-
+                new ThreadHttp().start();
 
 
                 count++;
@@ -199,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
 
                 new ThreadInstantRecord().start();        //录音
                 //录音播放线程
+
             }
         });
 
@@ -212,8 +230,37 @@ public class MainActivity extends AppCompatActivity {
                 btnStopRecord.setEnabled(false);
                 FPlay.colseWaveZ();
                 flag = false;
+                if (socket != null) {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
             }
         });
+    }
+
+
+    class ThreadHttp extends Thread {
+        @Override
+        public void run() {
+
+            try {
+                //创建Socket
+                socket = new Socket("192.168.43.135", PORT);//第一个参数是ip地址，第二个是端口号
+                //向服务器发送消息
+                out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+
+
+
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -357,19 +404,28 @@ public class MainActivity extends AppCompatActivity {
 
 
                 DemoL(bsRecordL, di, tempIIL, tempQQL);
-                AddDataToList(L_I,tempIIL);
-                AddDataToList(L_Q,tempQQL);
+                AddDataToList(L_I, tempIIL, true);
+                AddDataToList(L_Q, tempQQL, true);
+
+
+                if (L_I[0].size()!=0){
+                    out.println(L_I[0]);
+                    out.flush();
+                }
+
+
 
                 lastDist = di[110 - 1];
 
                 double[] tempIIR = new double[880];
                 double[] tempQQR = new double[880];
                 DemoR(bsRecordR, di, tempIIR, tempQQR);
-               AddDataToList(R_I,tempIIR);
-                AddDataToList(R_Q,tempQQR);
+                AddDataToList(R_I, tempIIR, false);
+                AddDataToList(R_Q, tempQQR, false);
                 /*
                 做的存储数据的操作
                  */
+
 
                 lastDistR = di[110 - 1];
                 NowPhase += totPhase / 2;
@@ -388,17 +444,19 @@ public class MainActivity extends AppCompatActivity {
 
                 msg2.obj = (df.format(lastDistR));
                 mHandler.sendMessage(msg2);
+
+
             }//while end
             audioRecord.stop();
-            SaveFile saveFile=new SaveFile(L_I,L_Q,R_I,R_Q,btnPlayRecord,MainActivity.this);
+            SaveFile saveFile = new SaveFile(L_I, L_Q, R_I, R_Q, btnPlayRecord, MainActivity.this);
             saveFile.execute("");
         }
 
     }
 
-    private void AddDataToList(ArrayList<Double>[] list, double[] data) {
-        if (data.length!=880){
-            Toast.makeText(MainActivity.this,"出现了未知bug，请联系小五改bug！",Toast.LENGTH_SHORT).show();
+    private void AddDataToList(ArrayList<Double>[] list, double[] data, boolean left) {
+        if (data.length != 880) {
+            Toast.makeText(MainActivity.this, "出现了未知bug，请联系小五改bug！", Toast.LENGTH_SHORT).show();
             btnPlayRecord.setEnabled(true);
             btnStopRecord.setEnabled(false);
             FPlay.colseWaveZ();
@@ -406,23 +464,24 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        boolean all_zero_flag=true;
-        for (int i=0;i<880;i++){
-            if (data[i]!=0){
-                all_zero_flag=false;
+        boolean all_zero_flag = true;
+        for (int i = 0; i < 880; i++) {
+            if (data[i] != 0) {
+                all_zero_flag = false;
             }
         }
 
-        if (all_zero_flag){
+        if (all_zero_flag) {
             return;
         }
-        int count=-1;
-        for (int i=0;i<880;i++){
-            if (i%110==0){
+        int count = -1;
+        for (int i = 0; i < 880; i++) {
+            if (i % 110 == 0) {
                 count++;
             }
             list[count].add(data[i]);
-       }
+
+        }
 
     }
 
@@ -437,6 +496,7 @@ public class MainActivity extends AppCompatActivity {
                 public void permissionGranted(@NonNull String[] permission) {
                     //用户授予了权限
                 }
+
                 @Override
                 public void permissionDenied(@NonNull String[] permission) {
                     //用户拒绝了权限
@@ -460,7 +520,7 @@ public class MainActivity extends AppCompatActivity {
 
     public native int DemoR(short[] Record, double[] DIST, double[] tempII, double[] tempQQ);
 
-    public native void myFilter(double hn[],double x[],double y[]);
+    public native void myFilter(double hn[], double x[], double y[]);
 
     // Used to load the 'native-lib' library on application startup.
     static {
