@@ -12,7 +12,7 @@
 
 extern "C"
 jstring
-Java_com_lee_edu_mydemo_MainActivity_stringFromJNI(
+Java_com_lee_edu_mydemo_Global_ThreadInstantRecord_stringFromJNI(
         JNIEnv *env,
         jobject /* this */,
         jintArray a) {
@@ -28,7 +28,7 @@ Java_com_lee_edu_mydemo_MainActivity_stringFromJNI(
 
 extern"C"
 JNIEXPORT void
-Java_com_lee_edu_mydemo_MainActivity_myFilter(
+Java_com_lee_edu_mydemo_Global_ThreadInstantRecord_myFilter(
         JNIEnv *env,
         jobject /* this */,
         jdoubleArray HN,
@@ -49,7 +49,8 @@ Java_com_lee_edu_mydemo_MainActivity_myFilter(
 
 extern "C"
 JNIEXPORT void
-Java_com_lee_edu_mydemo_MainActivity_mycicFromJNI(
+
+Java_com_lee_edu_mydemo_Global_ThreadInstantRecord_mycicFromJNI(
         JNIEnv *env,
         jobject /* this */,
         jintArray I,
@@ -68,7 +69,7 @@ Java_com_lee_edu_mydemo_MainActivity_mycicFromJNI(
 
 extern "C"
 JNIEXPORT void
-Java_com_lee_edu_mydemo_MainActivity_myADistFromJNI(
+Java_com_lee_edu_mydemo_Global_ThreadInstantRecord_myADistFromJNI(
                 JNIEnv *env,
                 jobject /* this */,
                 jdoubleArray inC,
@@ -87,7 +88,7 @@ newdemo *demo_data = NULL;
 
 extern "C"
 JNIEXPORT void
-Java_com_lee_edu_mydemo_MainActivity_DemoNew(
+Java_com_lee_edu_mydemo_Global_ThreadInstantRecord_DemoNew(
         JNIEnv *env,
         jobject /* this */
 ) {
@@ -98,7 +99,7 @@ Java_com_lee_edu_mydemo_MainActivity_DemoNew(
 
 extern "C"
 JNIEXPORT jdouble
-Java_com_lee_edu_mydemo_MainActivity_DemoL(
+Java_com_lee_edu_mydemo_Global_ThreadInstantRecord_DemoL(
         JNIEnv *env,
         jobject /* this */,
         jshortArray BUFF,
@@ -138,7 +139,7 @@ Java_com_lee_edu_mydemo_MainActivity_DemoL(
 
 extern "C"
 JNIEXPORT jdouble
-Java_com_lee_edu_mydemo_MainActivity_DemoR(
+Java_com_lee_edu_mydemo_Global_ThreadInstantRecord_DemoR(
         JNIEnv *env,
         jobject /* this */,
         jshortArray BUFF,
