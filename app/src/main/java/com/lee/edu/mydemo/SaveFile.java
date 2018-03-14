@@ -21,13 +21,13 @@ import java.util.Calendar;
 
 public class SaveFile extends AsyncTask<String, Void, Void> {
 
-    public SaveFile(ArrayList<Double>[] l_i, ArrayList<Double>[] l_q, ArrayList<Double>[] r_i, ArrayList<Double>[] r_q, Button start, Context context) {
+    public SaveFile(ArrayList<Double>[] l_i, ArrayList<Double>[] l_q, ArrayList<Double>[] r_i, ArrayList<Double>[] r_q, Button start) {
         this.l_i = l_i;
         this.l_q = l_q;
         this.r_i = r_i;
         this.r_q = r_q;
         this.start = start;
-        this.context = context;
+
     }
 
     private ArrayList<Double> l_i[];

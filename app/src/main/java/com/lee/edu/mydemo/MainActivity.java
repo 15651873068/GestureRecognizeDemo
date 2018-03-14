@@ -1,40 +1,38 @@
 package com.lee.edu.mydemo;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-
-import android.Manifest;
-
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.os.Environment;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.EditText;
+
+import android.Manifest;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.dfqin.grantor.PermissionListener;
 import com.github.dfqin.grantor.PermissionsUtil;
+import com.lee.edu.mydemo.Global.Global_data;
+
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 
 public class MainActivity extends AppCompatActivity {
+
 
     private ArrayList<Double> L_I[];
     private ArrayList<Double> L_Q[];
@@ -101,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
             RequestPermission();
         }
 
+
         Bmob.initialize(this, "9dbc988651cd8b0403a4d8e2566459e9");
 
         InitData();
@@ -123,10 +122,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+
     }
 
 
     private void InitView() {
+
         btnPlayRecord = (Button) findViewById(R.id.btnplayrecord);
         btnStopRecord = (Button) findViewById(R.id.btnstoprecord);
 
@@ -176,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
          *
          */
         //播放按钮
-        btnPlayRecord.setOnClickListener(new OnClickListener() {
+        btnPlayRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -227,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //停止按钮
-        btnStopRecord.setOnClickListener(new OnClickListener() {
+        btnStopRecord.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -499,6 +500,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     //本地方法，由java调用
     public native String stringFromJNI(int[] I);
 
@@ -522,4 +524,5 @@ public class MainActivity extends AppCompatActivity {
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
+
 }
