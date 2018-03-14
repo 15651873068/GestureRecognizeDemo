@@ -76,28 +76,28 @@ public class SaveFile extends AsyncTask<String, Void, Void> {
                 file_l_q.createNewFile();
             }
 
-            if (!file_r_i.exists()) {
-                File dir2 = new File(file_r_i.getParent());
-                dir2.mkdirs();
-                file_r_i.createNewFile();
-            }
-
-            if (!file_r_q.exists()) {
-                File dir3 = new File(file_r_q.getParent());
-                dir3.mkdirs();
-                file_r_q.createNewFile();
-            }
+//            if (!file_r_i.exists()) {
+//                File dir2 = new File(file_r_i.getParent());
+//                dir2.mkdirs();
+//                file_r_i.createNewFile();
+//            }
+//
+//            if (!file_r_q.exists()) {
+//                File dir3 = new File(file_r_q.getParent());
+//                dir3.mkdirs();
+//                file_r_q.createNewFile();
+//            }
 
 
             outStream_l_i = new FileOutputStream(file_l_i, true);
             outStream_l_q = new FileOutputStream(file_l_q, true);
-            outStream_r_i = new FileOutputStream(file_r_i, true);
-            outStream_r_q = new FileOutputStream(file_r_q, true);
+//            outStream_r_i = new FileOutputStream(file_r_i, true);
+//            outStream_r_q = new FileOutputStream(file_r_q, true);
 
             OutputStreamWriter writer_l_i = new OutputStreamWriter(outStream_l_i, "gb2312");
             OutputStreamWriter writer_l_q = new OutputStreamWriter(outStream_l_q, "gb2312");
-            OutputStreamWriter writer_r_i = new OutputStreamWriter(outStream_r_i, "gb2312");
-            OutputStreamWriter writer_r_q = new OutputStreamWriter(outStream_r_q, "gb2312");
+//            OutputStreamWriter writer_r_i = new OutputStreamWriter(outStream_r_i, "gb2312");
+//            OutputStreamWriter writer_r_q = new OutputStreamWriter(outStream_r_q, "gb2312");
 
             int len = l_i[0].size();
             for (int i = 0; i < 8; i++) {
@@ -106,10 +106,10 @@ public class SaveFile extends AsyncTask<String, Void, Void> {
                     writer_l_i.write("\n");
                     writer_l_q.write(String.valueOf(l_q[i].get(j)));//这边改成浮点型不知道会不会出错
                     writer_l_q.write("\n");
-                    writer_r_i.write(String.valueOf(r_i[i].get(j)));//这边改成浮点型不知道会不会出错
-                    writer_r_i.write("\n");
-                    writer_r_q.write(String.valueOf(r_q[i].get(j)));//这边改成浮点型不知道会不会出错
-                    writer_r_q.write("\n");
+//                    writer_r_i.write(String.valueOf(r_i[i].get(j)));//这边改成浮点型不知道会不会出错
+//                    writer_r_i.write("\n");
+//                    writer_r_q.write(String.valueOf(r_q[i].get(j)));//这边改成浮点型不知道会不会出错
+//                    writer_r_q.write("\n");
 
                 }
             }
@@ -118,10 +118,10 @@ public class SaveFile extends AsyncTask<String, Void, Void> {
             outStream_l_i.close();
             writer_l_q.close();
             outStream_l_q.close();
-            writer_r_i.close();
-            outStream_r_i.close();
-            writer_r_q.close();
-            outStream_r_q.close();
+//            writer_r_i.close();
+//            outStream_r_i.close();
+//            writer_r_q.close();
+//            outStream_r_q.close();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

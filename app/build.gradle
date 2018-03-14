@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
+    useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.lee.edu.mydemo"
         minSdkVersion 18
@@ -39,4 +40,5 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.0.1'
     testCompile 'junit:junit:4.12'
+    compile 'cn.bmob.android:bmob-sdk:3.5.5'
 }
