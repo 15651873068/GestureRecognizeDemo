@@ -10,47 +10,11 @@
 #define TAG    "myjni-test" // 这个是自定义的LOG的标识
 #define LOGW(...) __android_log_print(ANDROID_LOG_WARN,TAG ,__VA_ARGS__) // 定义LOGW类型
 
-extern "C"
-jstring
-Java_com_lee_edu_mydemo_MainActivity_stringFromJNI(
-        JNIEnv *env,
-        jobject /* this */,
-        jintArray a) {
-    jint *b =env->GetIntArrayElements(a,0);
-    b[0]=1;
-    b[1]=1;
-    b[2]=1;
-    env->ReleaseIntArrayElements(a,b,0);
-    std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
-}
-
-
-extern"C"
-JNIEXPORT void
-Java_com_lee_edu_mydemo_MainActivity_myFilter(
-        JNIEnv *env,
-        jobject /* this */,
-        jdoubleArray HN,
-        jdoubleArray X,
-        jdoubleArray Y
-){
-       jdouble *hn=(env)->GetDoubleArrayElements(HN,0);
-       jdouble *x=(env)->GetDoubleArrayElements(X,0);
-       jdouble *y=(env)->GetDoubleArrayElements(Y,0);
-
-       my_filter(hn,1,x,y);
-
-       (env)->ReleaseDoubleArrayElements(Y,y,0);
-       (env)->ReleaseDoubleArrayElements(X,x,0);
-       (env)->ReleaseDoubleArrayElements(HN,hn,0);
-
-}
 
 extern "C"
 JNIEXPORT void
 
-Java_com_lee_edu_mydemo_MainActivity_mycicFromJNI(
+Java_com_lee_edu_mydemo_Thread_InstantRecordThread_mycicFromJNI(
         JNIEnv *env,
         jobject /* this */,
         jintArray I,
@@ -69,7 +33,7 @@ Java_com_lee_edu_mydemo_MainActivity_mycicFromJNI(
 
 extern "C"
 JNIEXPORT void
-Java_com_lee_edu_mydemo_MainActivity_myADistFromJNI(
+Java_com_lee_edu_mydemo_Thread_InstantRecordThread_myADistFromJNI(
                 JNIEnv *env,
                 jobject /* this */,
                 jdoubleArray inC,
@@ -88,7 +52,7 @@ newdemo *demo_data = NULL;
 
 extern "C"
 JNIEXPORT void
-Java_com_lee_edu_mydemo_MainActivity_DemoNew(
+Java_com_lee_edu_mydemo_Thread_InstantRecordThread_DemoNew(
         JNIEnv *env,
         jobject /* this */
 ) {
@@ -99,7 +63,7 @@ Java_com_lee_edu_mydemo_MainActivity_DemoNew(
 
 extern "C"
 JNIEXPORT jdouble
-Java_com_lee_edu_mydemo_MainActivity_DemoL(
+Java_com_lee_edu_mydemo_Thread_InstantRecordThread_DemoL(
         JNIEnv *env,
         jobject /* this */,
         jshortArray BUFF,
@@ -139,7 +103,7 @@ Java_com_lee_edu_mydemo_MainActivity_DemoL(
 
 extern "C"
 JNIEXPORT jdouble
-Java_com_lee_edu_mydemo_MainActivity_DemoR(
+Java_com_lee_edu_mydemo_Thread_InstantRecordThread_DemoR(
         JNIEnv *env,
         jobject /* this */,
         jshortArray BUFF,

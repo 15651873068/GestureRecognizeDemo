@@ -1,8 +1,10 @@
-package com.lee.edu.mydemo;
+package com.lee.edu.mydemo.Utils;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
+
+import com.lee.edu.mydemo.JavaBean.DataBean;
 
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
@@ -11,12 +13,12 @@ import cn.bmob.v3.listener.SaveListener;
  * Created by dmrf on 18-3-14.
  */
 
-public class SendData extends AsyncTask<String, Void, Void> {
+public class SendDataUtils extends AsyncTask<String, Void, Void> {
 
     private DataBean dataBean;
     private Context context;
 
-    public SendData(DataBean dataBean, Context context) {
+    public SendDataUtils(DataBean dataBean, Context context) {
         this.dataBean = dataBean;
         this.context = context;
     }

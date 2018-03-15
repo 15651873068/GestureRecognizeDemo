@@ -1,4 +1,4 @@
-package com.lee.edu.mydemo;
+package com.lee.edu.mydemo.Utils;
 
 /**
  * Created by lisi on 2017/3/16.
@@ -9,7 +9,7 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 
 
-public class FrequencyPlayer {
+public class FrequencyPlayerUtils {
     private AudioTrack audioTrack;		//播放音轨
 
     private final int sampleRate = 44100;	//采样率
@@ -25,7 +25,7 @@ public class FrequencyPlayer {
     private boolean isRunning = false;
     private AudioTrack audioTrackz;
 
-    public FrequencyPlayer(int num,double[]freArray) {
+    public FrequencyPlayerUtils(int num, double[]freArray) {
         numfreq = num;
         freqOfTone = freArray;
 

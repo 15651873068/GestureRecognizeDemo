@@ -1,4 +1,4 @@
-package com.lee.edu.mydemo;
+package com.lee.edu.mydemo.JavaBean;
 
 import cn.bmob.v3.BmobObject;
 
