@@ -7,6 +7,9 @@ package com.lee.edu.mydemo.Utils;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.os.Handler;
+import android.os.Message;
+
 
 
 public class FrequencyPlayerUtils {
@@ -24,8 +27,10 @@ public class FrequencyPlayerUtils {
     private AudioTrackZThread audioTrackZThread;
     private boolean isRunning = false;
     private AudioTrack audioTrackz;
+    private Handler mHandler;
 
-    public FrequencyPlayerUtils(int num, double[]freArray) {
+    public FrequencyPlayerUtils(int num, double[]freArray,Handler handler) {
+        mHandler=handler;
         numfreq = num;
         freqOfTone = freArray;
 
@@ -53,7 +58,7 @@ public class FrequencyPlayerUtils {
         }
     }
 
-    class AudioTrackZThread extends Thread {
+    class AudioTrackZThread extends Thread  {
         private short m_iAmp = (short) (Short.MAX_VALUE / numfreq);
         private short m_bitDateZ[] = new short[44100];
         private double x = 2.0 * Math.PI  / 44100.0;
@@ -69,7 +74,17 @@ public class FrequencyPlayerUtils {
 
             int m_bitDateZSize = m_bitDateZ.length;
             do {
-                audioTrackz.write(m_bitDateZ, 0, m_bitDateZSize);
+                try {
+                    audioTrackz.write(m_bitDateZ, 0, m_bitDateZSize);
+                }catch (RuntimeException e){
+                    Message msg3 = new Message();
+                    msg3.what = 0;
+
+                    msg3.obj = ("playe");
+
+                    mHandler.sendMessage(msg3);
+                }
+
                 // Log.v("isRunn", isRunning+"");
             } while (isRunning);
             super.run();

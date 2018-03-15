@@ -10,6 +10,7 @@ import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lee.edu.mydemo.Thread.InstantPlayThread;
 import com.lee.edu.mydemo.Thread.InstantRecordThread;
@@ -67,6 +68,8 @@ public class GlobalBean {
                 case 0:
                     if(msg.obj.toString().equals("stop")){
                         Stop();
+                    }else if(msg.obj.toString().equals("playe")) {
+                        Toast.makeText(context,"发生了异常，请联系最帅的人优化代码～",Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case 1:

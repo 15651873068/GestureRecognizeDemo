@@ -18,7 +18,7 @@ public class InstantPlayThread extends Thread{
 
     @Override
     public void run() {
-        globalBean.FPlay = new FrequencyPlayerUtils( globalBean.numfre,  globalBean.Freqarrary);
+        globalBean.FPlay = new FrequencyPlayerUtils( globalBean.numfre,  globalBean.Freqarrary,globalBean.mHandler);
         globalBean.FPlay.palyWaveZ();
         while ( globalBean.flag) {
         }

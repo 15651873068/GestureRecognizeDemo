@@ -134,7 +134,12 @@ public class InstantRecordThread extends Thread {
             msg2.obj = (df.format(lastDistR));
             globalBean.mHandler.sendMessage(msg2);
         }//while end
-        globalBean.audioRecord.stop();
+        try {
+            globalBean.audioRecord.stop();
+        }catch (IllegalStateException e){
+            Toast.makeText(context,"发生了异常，请联系最帅的人优化代码",Toast.LENGTH_SHORT).show();
+        }
+
 
 
     }
