@@ -26,8 +26,16 @@ public class DataBean extends BmobObject {
     private String Q6;
     private String Q7;
 
-    private String a_username;
-    private String a_gesturename;
+
+    private String filename;
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 
     public String getI0() {
         return I0;
@@ -157,19 +165,4 @@ public class DataBean extends BmobObject {
         Q7 = q7;
     }
 
-    public String getA_username() {
-        return a_username;
-    }
-
-    public void setA_username(String a_username) {
-        this.a_username = a_username;
-    }
-
-    public String getA_gesturename() {
-        return a_gesturename;
-    }
-
-    public void setA_gesturename(String a_gesturename) {
-        this.a_gesturename = a_gesturename;
-    }
 }
