@@ -27,25 +27,8 @@ public class InstantRecordThread extends Thread {
 
     @Override
     public void run() {
-        short[] bsRecord = new short[globalBean.recBufSize];//recBufSize=4400*2
+        short[] bsRecord = new short[globalBean.recBufSize];//recBufSize=4400
 
-        short[] bsRecordL = new short[globalBean.recBufSize / 2];
-        short[] bsRecordR = new short[globalBean.recBufSize / 2];
-
-        short[] BIGDATA = new short[44100 * 30];
-        short[] BIGDATA2 = new short[44100 * 30];
-
-        double[] BIGDATAIIL = new double[44100 * 30];//这边4个从1开始取 注意+1
-        double[] BIGDATAQQL = new double[44100 * 30];
-
-        double[] BIGDATAIIR = new double[44100 * 30];
-        double[] BIGDATAQQR = new double[44100 * 30];
-        //八个频率调整好的数据
-        double[] needIL = new double[880 + 2];
-        double[] needQL = new double[880 + 2];
-
-        double[] needIR = new double[880 + 2];
-        double[] needQR = new double[880 + 2];
 
         int n = 0;
         double totPhase = 0;

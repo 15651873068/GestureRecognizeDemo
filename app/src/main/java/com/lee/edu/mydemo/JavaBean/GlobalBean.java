@@ -37,7 +37,7 @@ public class GlobalBean {
     public AudioRecord audioRecord;    //录音对象
     public FrequencyPlayerUtils FPlay;
     public int sampleRateInHz = 44100;//采样率（默认44100，每秒44100个点）
-    public int recBufSize = 4400*2;            //定义录音片长度
+    public int recBufSize = 4400;            //定义录音片长度
     public int numfre = 8;
 
 
@@ -156,8 +156,6 @@ public class GlobalBean {
     }
 
     public void AddDataToList(ArrayList<Double>[] list, double[] data) {
-
-
 
         int count = -1;
         for (int i = 0; i < 880; i++) {
