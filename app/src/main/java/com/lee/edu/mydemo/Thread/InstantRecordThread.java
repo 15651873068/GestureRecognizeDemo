@@ -78,8 +78,8 @@ public class InstantRecordThread extends Thread {
             if (!all_zero_flag) {
                 globalBean.AddDataToList(globalBean.L_I, tempIIL);
                 globalBean.AddDataToList(globalBean.L_Q, tempQQL);
-                while_count++;
-                if (while_count == 25) {
+                while_count+=110;
+                if (while_count== globalBean.gesture_length) {
 
 
                     Message msg3 = new Message();
