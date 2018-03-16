@@ -1,22 +1,33 @@
 package com.lee.edu.mydemo.JavaBean;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lee.edu.mydemo.Activity.MainActivity;
 import com.lee.edu.mydemo.Thread.InstantPlayThread;
 import com.lee.edu.mydemo.Thread.InstantRecordThread;
 import com.lee.edu.mydemo.Utils.FrequencyPlayerUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 
 /**
  * Created by dmrf on 18-3-15.
@@ -48,6 +59,9 @@ public class GlobalBean {
     public Button btnStopRecord;        //结束按钮
     public TextView tvDist;            //显示距离
     public TextView tvDist2;            //显示距离
+    public Button btnSetWhichandWho;
+    public Button btnQuerycount;
+    public int is_in_count = -1;
 
     /*
     variable
@@ -55,6 +69,7 @@ public class GlobalBean {
     public boolean flag = true;        //播放标志
     public ArrayList<Double> L_I[];
     public ArrayList<Double> L_Q[];
+    public String whoandwhich = "";
 
     private Context context;
 
@@ -66,10 +81,10 @@ public class GlobalBean {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    if(msg.obj.toString().equals("stop")){
+                    if (msg.obj.toString().equals("stop")) {
                         Stop();
-                    }else if(msg.obj.toString().equals("playe")) {
-                        Toast.makeText(context,"发生了异常，请联系最帅的人优化代码～",Toast.LENGTH_SHORT).show();
+                    } else if (msg.obj.toString().equals("playe")) {
+                        Toast.makeText(context, "发生了异常，请联系最帅的人优化代码～", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case 1:
@@ -99,6 +114,7 @@ public class GlobalBean {
 
         }
 
+
         audioRecord = new AudioRecord(
                 MediaRecorder.AudioSource.MIC,//从麦克风采集音频
                 sampleRateInHz,//采样率，这里的值是sampleRateInHz = 44100即每秒钟采样44100次
@@ -113,6 +129,10 @@ public class GlobalBean {
                 btnPlayRecord.setEnabled(false);
                 btnStopRecord.setEnabled(true);
 
+                if (whoandwhich.equals("")) {
+                    Toast.makeText(context, "不告诉我你是谁不让你录！", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if (L_I[0] != null) {
                     for (int i = 0; i < 8; i++) {
                         L_I[i].clear();
@@ -145,6 +165,46 @@ public class GlobalBean {
                 Stop();
             }
         });
+
+        btnQuerycount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btnQuerycount.setText("查询中.......");
+                if (whoandwhich.equals("")) {
+                    Toast.makeText(context, "不告诉我你是谁我怎么怎么帮你查！", Toast.LENGTH_SHORT).show();
+                    btnQuerycount.setText("查询已录条数");
+                    return;
+                } else {
+
+                    if (is_in_count != -1) {
+                        Toast.makeText(context, "已录入" + is_in_count + "条数据", Toast.LENGTH_SHORT).show();
+                    } else {
+                        BmobQuery<DataBean> bmobQuery = new BmobQuery<DataBean>();
+                        bmobQuery.addWhereEqualTo("whoandwhich", whoandwhich);
+                        bmobQuery.findObjects(new FindListener<DataBean>() {
+                            @Override
+                            public void done(List<DataBean> list, BmobException e) {
+                                if (e == null) {
+                                    Toast.makeText(context, "已录入" + list.size() + "条数据", Toast.LENGTH_SHORT).show();
+
+                                } else {
+                                    Toast.makeText(context, "查询数据失败，请联系最帅的人查找bug～", Toast.LENGTH_SHORT).show();
+                                }
+                                btnQuerycount.setText("查询已录条数");
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        btnSetWhichandWho.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                whoandwhich = "";
+                ShowChoiseWho();
+            }
+        });
     }
 
 
@@ -165,6 +225,51 @@ public class GlobalBean {
             list[count].add(data[i]);
         }
 
+    }
+
+
+    public void ShowChoiseWho() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, android.R.style.Theme_Holo_Light_Dialog);
+        //builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle("设置玩家姓名");
+        //    指定下拉列表的显示数据
+        final String[] names = {"王jun玙", "历傲然", "蔡益武", "李珍岩", "张玉麟", "薛方岗"};
+        final String[] codes = {"wangjunyu", "liaoran", "caiyiwu", "lizhenyan", "zhangyulin", "xuefanggang"};
+        SimpleDateFormat formatter = new SimpleDateFormat("MM_dd");
+        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+        final String day = formatter.format(curDate);
+
+        //    设置一个下拉的列表选择项
+        builder.setItems(names, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                whoandwhich = codes[which] + "_" + day;
+                ShowChoiseWhich();
+            }
+        });
+        builder.show();
+    }
+
+
+    private void ShowChoiseWhich() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, android.R.style.Theme_Holo_Light_Dialog);
+        //builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle("设置游戏英雄");
+        //    指定下拉列表的显示数据
+        final String[] names = {"A", "B", "C", "D", "E", "F"};
+        //    设置一个下拉的列表选择项
+        builder.setItems(names, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                whoandwhich = whoandwhich + "_" + names[which];
+                Toast.makeText(context, "choose:" + whoandwhich, Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.show();
     }
 
 }

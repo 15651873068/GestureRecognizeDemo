@@ -1,6 +1,8 @@
 package com.lee.edu.mydemo.Activity;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +22,7 @@ import cn.bmob.v3.Bmob;
 
 public class MainActivity extends AppCompatActivity {
 
-   private GlobalBean globalBean;
+    private GlobalBean globalBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +34,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Bmob.initialize(this, "9dbc988651cd8b0403a4d8e2566459e9");
-         globalBean=new GlobalBean(MainActivity.this);
+        globalBean = new GlobalBean(MainActivity.this);
+        globalBean.ShowChoiseWho();
         Init();
 
 
     }
-
-
 
 
     private void Init() {
@@ -49,12 +50,11 @@ public class MainActivity extends AppCompatActivity {
         globalBean.tvDist2 = (TextView) findViewById(R.id.textView2);
         globalBean.tvDist2.setText(String.valueOf(0));
         globalBean.btnStopRecord.setEnabled(false);
+        globalBean.btnQuerycount= (Button) findViewById(R.id.bt_query_count);
+        globalBean.btnSetWhichandWho= (Button) findViewById(R.id.bt_setusername);
+
         globalBean.Init();
     }
-
-
-
-
 
 
     private void RequestPermission() {
@@ -76,4 +76,6 @@ public class MainActivity extends AppCompatActivity {
             }, permissions);
         }
     }
+
+
 }

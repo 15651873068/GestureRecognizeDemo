@@ -22,7 +22,7 @@ public class InstantRecordThread extends Thread {
 
     public InstantRecordThread(GlobalBean globalBean, Context context) {
         this.globalBean = globalBean;
-        this.context=context;
+        this.context = context;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class InstantRecordThread extends Thread {
             e.printStackTrace();
             return;
         }
-        int while_count=0;
+        int while_count = 0;
         while (globalBean.flag)//大循环
         {
 
@@ -57,7 +57,7 @@ public class InstantRecordThread extends Thread {
             //读取录音
             // short[] bsRecord = new short[recBufSize];//recBufSize=4400*2
 
-           int  Len = globalBean.audioRecord.read(bsRecord, 0, globalBean.recBufSize);
+            int Len = globalBean.audioRecord.read(bsRecord, 0, globalBean.recBufSize);
 
 
             double[] di = new double[110];
@@ -78,18 +78,18 @@ public class InstantRecordThread extends Thread {
             if (!all_zero_flag) {
                 globalBean.AddDataToList(globalBean.L_I, tempIIL);
                 globalBean.AddDataToList(globalBean.L_Q, tempQQL);
-               while_count++;
-               if (while_count==25){
+                while_count++;
+                if (while_count == 25) {
 
 
-                   Message msg3 = new Message();
-                   msg3.what = 0;
+                    Message msg3 = new Message();
+                    msg3.what = 0;
 
-                   msg3.obj = ("stop");
-                   globalBean.mHandler.sendMessage(msg3);
-                   SaveData();
-                   break;
-               }
+                    msg3.obj = ("stop");
+                    globalBean.mHandler.sendMessage(msg3);
+                    SaveData();
+                    break;
+                }
             }
 
             lastDist = di[110 - 1];
@@ -119,14 +119,14 @@ public class InstantRecordThread extends Thread {
         }//while end
         try {
             globalBean.audioRecord.stop();
-        }catch (IllegalStateException e){
-            Toast.makeText(context,"发生了异常，请联系最帅的人优化代码",Toast.LENGTH_SHORT).show();
+        } catch (IllegalStateException e) {
+            Toast.makeText(context, "发生了异常，请联系最帅的人优化代码", Toast.LENGTH_SHORT).show();
         }
 
 
-
     }
-    private void SaveData(){
+
+    private void SaveData() {
 
         DataBean dataBean = new DataBean();
         dataBean.setI0(globalBean.L_I[0].toString());
@@ -147,14 +147,14 @@ public class InstantRecordThread extends Thread {
         dataBean.setQ5(globalBean.L_Q[5].toString());
         dataBean.setQ6(globalBean.L_Q[6].toString());
         dataBean.setQ7(globalBean.L_Q[7].toString());
+        dataBean.setWhoandwhich(globalBean.whoandwhich);
 
-        long time=System.currentTimeMillis();
+        long time = System.currentTimeMillis();
         dataBean.setFilename(String.valueOf(time));
 
-        SendDataUtils sendDataUtils = new SendDataUtils(dataBean, context);
+        SendDataUtils sendDataUtils = new SendDataUtils(dataBean, context,globalBean);
         sendDataUtils.execute("");
     }
-
 
 
     public native void DemoNew();

@@ -28,6 +28,15 @@ public class DataBean extends BmobObject {
 
 
     private String filename;
+    private String whoandwhich;
+
+    public String getWhoandwhich() {
+        return whoandwhich;
+    }
+
+    public void setWhoandwhich(String whoandwhich) {
+        this.whoandwhich = whoandwhich;
+    }
 
     public String getFilename() {
         return filename;
