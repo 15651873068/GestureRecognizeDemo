@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@mipmap/backicon"
     tools:context="com.lee.edu.mydemo.Activity.MainActivity">
 
     <TextView
@@ -29,14 +30,19 @@
 
             <Button
                 android:id="@+id/btnplayrecord"
-                android:textSize="25dp"
+                android:textSize="30dp"
+                android:alpha="0.5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:textColor="#008000"
                 android:text="开始" />
 
             <Button
                 android:id="@+id/btnstoprecord"
+                android:alpha="0.5"
+                android:textSize="30dp"
+                android:textColor="#008000"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -50,6 +56,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
+                android:textColor="#008000"
+                android:alpha="0.5"
                 android:text="设置游戏英雄" />
 
             <Button
@@ -58,6 +66,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center"
+                android:alpha="0.5"
+                android:textColor="#008000"
                 android:text="查询已录条数" />
         </LinearLayout>
 
@@ -79,20 +89,24 @@
             android:orientation="vertical">
 
             <TextView
+                android:visibility="gone"
                 android:id="@+id/textView1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textColor="#FFFFFF"
                 android:text="0.00" />
 
 
             <TextView
+                android:visibility="gone"
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:textColor="#FFFFFF"
                 android:text="0.00" />
 
         </LinearLayout>
@@ -109,6 +123,7 @@
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:textColor="#9370DB"
     android:layout_gravity="center_horizontal"
     android:text="Copyright © 2018.03.16 NUAA_Geature"/>
 </LinearLayout>

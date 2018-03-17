@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -11,11 +12,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lee.edu.mydemo.Activity.MainActivity;
+import com.lee.edu.mydemo.R;
 import com.lee.edu.mydemo.Thread.InstantPlayThread;
 import com.lee.edu.mydemo.Thread.InstantRecordThread;
 import com.lee.edu.mydemo.Utils.FrequencyPlayerUtils;
@@ -77,6 +80,7 @@ public class GlobalBean {
     @SuppressLint("HandlerLeak")
     public Handler mHandler = new Handler() {
         //设置圆环角度
+        @SuppressLint("ResourceAsColor")
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -85,6 +89,13 @@ public class GlobalBean {
                         Stop();
                     } else if (msg.obj.toString().equals("playe")) {
                         Toast.makeText(context, "发生了异常，请联系最帅的人优化代码～", Toast.LENGTH_SHORT).show();
+                    } else if (msg.obj.toString().equals("start")) {
+                        btnPlayRecord.setEnabled(false);
+                        btnPlayRecord.setTextColor(R.color.notcolor);
+                        btnStopRecord.setEnabled(true);
+                        btnStopRecord.setTextColor(R.color.okcolor);
+                        tvDist.setVisibility(View.VISIBLE);
+                        tvDist2.setVisibility(View.VISIBLE);
                     }
                     break;
                 case 1:
@@ -124,10 +135,9 @@ public class GlobalBean {
 
 
         btnPlayRecord.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View v) {
-                btnPlayRecord.setEnabled(false);
-                btnStopRecord.setEnabled(true);
 
                 if (whoandwhich.equals("")) {
                     Toast.makeText(context, "不告诉我你是谁不让你录！", Toast.LENGTH_SHORT).show();
@@ -208,9 +218,14 @@ public class GlobalBean {
     }
 
 
+    @SuppressLint("ResourceAsColor")
     public void Stop() {
         btnPlayRecord.setEnabled(true);
+        btnPlayRecord.setTextColor(R.color.okcolor);
         btnStopRecord.setEnabled(false);
+        btnStopRecord.setTextColor(R.color.notcolor);
+        tvDist.setVisibility(View.GONE);
+        tvDist2.setVisibility(View.GONE);
         FPlay.colseWaveZ();
         flag = false;
     }
@@ -249,7 +264,10 @@ public class GlobalBean {
                 ShowChoiseWhich();
             }
         });
-        builder.show();
+        AlertDialog alertDialog = builder.create();
+        final Window window = alertDialog.getWindow();
+        window.setBackgroundDrawable(new ColorDrawable(0));
+        alertDialog.show();
     }
 
 
@@ -258,6 +276,7 @@ public class GlobalBean {
         AlertDialog.Builder builder = new AlertDialog.Builder(context, android.R.style.Theme_Holo_Light_Dialog);
         //builder.setIcon(R.drawable.ic_launcher);
         builder.setTitle("设置游戏英雄");
+
         //    指定下拉列表的显示数据
         final String[] names = {"A", "B", "C", "D", "E", "F"};
         //    设置一个下拉的列表选择项
@@ -269,7 +288,10 @@ public class GlobalBean {
                 Toast.makeText(context, "choose:" + whoandwhich, Toast.LENGTH_SHORT).show();
             }
         });
-        builder.show();
+        AlertDialog alertDialog = builder.create();
+        final Window window = alertDialog.getWindow();
+        window.setBackgroundDrawable(new ColorDrawable(0));
+        alertDialog.show();
     }
 
 }

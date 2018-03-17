@@ -50,6 +50,7 @@ public class InstantRecordThread extends Thread {
             return;
         }
         int while_count = 0;
+
         while (globalBean.flag)//大循环
         {
 
@@ -67,30 +68,33 @@ public class InstantRecordThread extends Thread {
 
             DemoL(bsRecord, di, tempIIL, tempQQL);
 
-            boolean all_zero_flag = true;
-            for (int i = 0; i < 880; i++) {
-                if (tempIIL[i] != 0) {
-                    all_zero_flag = false;
-                    break;
-                }
-            }
 
-            if (!all_zero_flag) {
+
+            while_count++;
+
+            if (while_count>5){
                 globalBean.AddDataToList(globalBean.L_I, tempIIL);
                 globalBean.AddDataToList(globalBean.L_Q, tempQQL);
-                while_count++;
-                if (while_count == 25) {
-
-
-                    Message msg3 = new Message();
-                    msg3.what = 0;
-
-                    msg3.obj = ("stop");
-                    globalBean.mHandler.sendMessage(msg3);
-                    SaveData();
-                    break;
-                }
             }
+
+            if (while_count == 4) {
+                Message msg3 = new Message();
+                msg3.what = 0;
+
+                msg3.obj = ("start");
+                globalBean.mHandler.sendMessage(msg3);
+            } else if (while_count == 30) {
+
+
+                Message msg3 = new Message();
+                msg3.what = 0;
+
+                msg3.obj = ("stop");
+                globalBean.mHandler.sendMessage(msg3);
+                SaveData();
+                break;
+            }
+
 
             lastDist = di[110 - 1];
 
@@ -152,7 +156,7 @@ public class InstantRecordThread extends Thread {
         long time = System.currentTimeMillis();
         dataBean.setFilename(String.valueOf(time));
 
-        SendDataUtils sendDataUtils = new SendDataUtils(dataBean, context,globalBean);
+        SendDataUtils sendDataUtils = new SendDataUtils(dataBean, context, globalBean);
         sendDataUtils.execute("");
     }
 
