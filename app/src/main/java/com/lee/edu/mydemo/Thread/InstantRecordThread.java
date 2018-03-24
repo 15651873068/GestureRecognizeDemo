@@ -50,6 +50,7 @@ public class InstantRecordThread extends Thread {
             return;
         }
         int while_count = 0;
+        int begin_while = 0;
 
         while (globalBean.flag)//大循环
         {
@@ -69,32 +70,53 @@ public class InstantRecordThread extends Thread {
             DemoL(bsRecord, di, tempIIL, tempQQL);
 
 
-
             while_count++;
 
-            if (while_count>5){
+            if (begin_while > 0) {
                 globalBean.AddDataToList(globalBean.L_I, tempIIL);
                 globalBean.AddDataToList(globalBean.L_Q, tempQQL);
             }
 
-            if (while_count == 4) {
+            if (while_count == 5 && begin_while == 0) {
                 Message msg3 = new Message();
                 msg3.what = 0;
 
                 msg3.obj = ("start");
                 globalBean.mHandler.sendMessage(msg3);
-            } else if (while_count == 30) {
+                while_count = 0;
+                begin_while++;
+            } else if (while_count == 10 && begin_while > 0) {
 
+                SaveData();
+                while_count = 0;
+                begin_while++;
+                Message msg2 = new Message();
+                msg2.what = 0;
 
+                msg2.obj = ("wait");
+                globalBean.mHandler.sendMessage(msg2);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 Message msg3 = new Message();
                 msg3.what = 0;
 
-                msg3.obj = ("stop");
+                msg3.obj = ("start");
                 globalBean.mHandler.sendMessage(msg3);
-                SaveData();
+            }
+            if (begin_while == 11) {
+
+                Message msg2 = new Message();
+                msg2.what = 0;
+
+                msg2.obj = "stop";
+                globalBean.mHandler.sendMessage(msg2);
+
                 break;
             }
-
 
             lastDist = di[110 - 1];
 
@@ -121,11 +143,6 @@ public class InstantRecordThread extends Thread {
             msg2.obj = (df.format(lastDistR));
             globalBean.mHandler.sendMessage(msg2);
         }//while end
-        try {
-            globalBean.audioRecord.stop();
-        } catch (IllegalStateException e) {
-            Toast.makeText(context, "发生了异常，请联系最帅的人优化代码", Toast.LENGTH_SHORT).show();
-        }
 
 
     }

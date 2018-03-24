@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         globalBean.tvDist.setText(String.valueOf(0));
         globalBean.tvDist2 = (TextView) findViewById(R.id.textView2);
         globalBean.tvDist2.setText(String.valueOf(0));
-        globalBean.btnStopRecord.setEnabled(false);
         globalBean.btnQuerycount= (Button) findViewById(R.id.bt_query_count);
         globalBean.btnSetWhichandWho= (Button) findViewById(R.id.bt_setusername);
 

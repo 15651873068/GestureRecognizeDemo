@@ -85,17 +85,30 @@ public class GlobalBean {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    if (msg.obj.toString().equals("stop")) {
-                        Stop();
-                    } else if (msg.obj.toString().equals("playe")) {
-                        Toast.makeText(context, "发生了异常，请联系最帅的人优化代码～", Toast.LENGTH_SHORT).show();
+                    if (msg.obj.toString().equals("wait")) {
+                        tvDist.setVisibility(View.GONE);
+                        tvDist2.setVisibility(View.GONE);
+                        for (int i = 0; i < 8; i++) {
+                            L_I[i].clear();
+                            L_Q[i].clear();
+                        }
+
                     } else if (msg.obj.toString().equals("start")) {
-                        btnPlayRecord.setEnabled(false);
-                        btnPlayRecord.setTextColor(R.color.notcolor);
-                        btnStopRecord.setEnabled(true);
-                        btnStopRecord.setTextColor(R.color.okcolor);
                         tvDist.setVisibility(View.VISIBLE);
                         tvDist2.setVisibility(View.VISIBLE);
+                        Start();
+                    } else if (msg.obj.toString().equals("stop")) {
+
+                        btnPlayRecord.setVisibility(View.VISIBLE);
+
+                        btnStopRecord.setVisibility(View.GONE);
+                        tvDist.setVisibility(View.GONE);
+                        tvDist2.setVisibility(View.GONE);
+                        FPlay.colseWaveZ();
+                        audioRecord.stop();
+
+                    } else if (msg.obj.toString().equals("playe")) {
+                        Toast.makeText(context, "发生了异常，请联系最帅的人优化代码～", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case 1:
@@ -134,23 +147,24 @@ public class GlobalBean {
                 recBufSize);//录音片段的长度，给的是minBufSize=recBufSize = 4400 * 2;
 
 
+        btnStopRecord.setVisibility(View.GONE);
         btnPlayRecord.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View v) {
 
+
+                btnPlayRecord.setVisibility(View.GONE);
+
+
+                btnStopRecord.setVisibility(View.VISIBLE);
                 if (whoandwhich.equals("")) {
                     Toast.makeText(context, "不告诉我你是谁不让你录！", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (L_I[0] != null) {
-                    for (int i = 0; i < 8; i++) {
-                        L_I[i].clear();
-                        L_Q[i].clear();
-                    }
-                }
 
-                flag = true;
+                Start();
+
                 new InstantPlayThread(GlobalBean.this).start();        //播放(发射超声波)
 
 
@@ -163,16 +177,28 @@ public class GlobalBean {
 
                 new InstantRecordThread(GlobalBean.this, context).start();        //录音
                 //录音播放线程
+
             }
         });
+
 
         //停止按钮
         btnStopRecord.setOnClickListener(new View.OnClickListener() {
 
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View v) {
                 // TODO 自动生成的方法存根
-                Stop();
+//
+//                btnPlayRecord.setVisibility(View.VISIBLE);
+//
+//                btnStopRecord.setVisibility(View.GONE);
+//
+//                tvDist.setVisibility(View.GONE);
+//                tvDist2.setVisibility(View.GONE);
+//                FPlay.colseWaveZ();
+//                audioRecord.stop();
+//                flag = false;
             }
         });
 
@@ -220,14 +246,7 @@ public class GlobalBean {
 
     @SuppressLint("ResourceAsColor")
     public void Stop() {
-        btnPlayRecord.setEnabled(true);
-        btnPlayRecord.setTextColor(R.color.okcolor);
-        btnStopRecord.setEnabled(false);
-        btnStopRecord.setTextColor(R.color.notcolor);
-        tvDist.setVisibility(View.GONE);
-        tvDist2.setVisibility(View.GONE);
-        FPlay.colseWaveZ();
-        flag = false;
+
     }
 
     public void AddDataToList(ArrayList<Double>[] list, double[] data) {
@@ -249,8 +268,8 @@ public class GlobalBean {
         //builder.setIcon(R.drawable.ic_launcher);
         builder.setTitle("设置玩家姓名");
         //    指定下拉列表的显示数据
-        final String[] names = {"王jun玙", "历傲然", "蔡益武", "李珍岩", "张玉麟", "薛方岗"};
-        final String[] codes = {"wangjunyu", "liaoran", "caiyiwu", "lizhenyan", "zhangyulin", "xuefanggang"};
+        final String[] names = {"王jun玙", "历傲然", "蔡益武", "李珍岩", "张玉麟", "薛方岗","Try"};
+        final String[] codes = {"wangjunyu", "liaoran", "caiyiwu", "lizhenyan", "zhangyulin", "xuefanggang","try"};
         SimpleDateFormat formatter = new SimpleDateFormat("MM_dd");
         Date curDate = new Date(System.currentTimeMillis());//获取当前时间
         final String day = formatter.format(curDate);
@@ -271,6 +290,18 @@ public class GlobalBean {
     }
 
 
+    private void Start() {
+        if (L_I[0] != null) {
+            for (int i = 0; i < 8; i++) {
+                L_I[i].clear();
+                L_Q[i].clear();
+            }
+        }
+
+        flag = true;
+
+    }
+
     private void ShowChoiseWhich() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context, android.R.style.Theme_Holo_Light_Dialog);
@@ -278,14 +309,16 @@ public class GlobalBean {
         builder.setTitle("设置游戏英雄");
 
         //    指定下拉列表的显示数据
-        final String[] names = {"A", "B", "C", "D", "E", "F"};
+        final String[] names = {"Click", "Flip", "Circle", "Grab", "Release"};
+        final String[] name_code = {"F", "G", "H", "I", "J"};
         //    设置一个下拉的列表选择项
         builder.setItems(names, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                whoandwhich = whoandwhich + "_" + names[which];
-                Toast.makeText(context, "choose:" + whoandwhich, Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(context, "choose:" + whoandwhich + "_" + names[which], Toast.LENGTH_SHORT).show();
+                whoandwhich = whoandwhich + "_" + name_code[which];
             }
         });
         AlertDialog alertDialog = builder.create();

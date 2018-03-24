@@ -33,7 +33,7 @@ public class SendDataUtils extends AsyncTask<String, Void, Void> {
                 @Override
                 public void done(String s, BmobException e) {
                     if(e==null){
-                        Toast.makeText(context,"添加数据成功",Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(context,"添加数据成功",Toast.LENGTH_SHORT).show();
                         if (globalBean.is_in_count!=-1){
                             globalBean.is_in_count++;
                         }
