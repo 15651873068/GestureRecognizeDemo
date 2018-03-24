@@ -75,7 +75,9 @@ public class InstantRecordThread extends Thread {
             if (begin_while > 0) {
                 globalBean.AddDataToList(globalBean.L_I, tempIIL);
                 globalBean.AddDataToList(globalBean.L_Q, tempQQL);
+
             }
+
 
             if (while_count == 5 && begin_while == 0) {
                 Message msg3 = new Message();

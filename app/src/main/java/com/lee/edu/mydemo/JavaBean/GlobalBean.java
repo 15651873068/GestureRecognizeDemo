@@ -65,6 +65,7 @@ public class GlobalBean {
     public Button btnSetWhichandWho;
     public Button btnQuerycount;
     public int is_in_count = -1;
+    public int gesture_length=1100;
 
     /*
     variable
