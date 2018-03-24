@@ -87,7 +87,7 @@ public class InstantRecordThread extends Thread {
                 globalBean.mHandler.sendMessage(msg3);
                 while_count = 0;
                 begin_while++;
-            } else if (while_count == 10 && begin_while > 0) {
+            } else if (while_count == 20 && begin_while > 0) {
 
                 SaveData();
                 while_count = 0;
