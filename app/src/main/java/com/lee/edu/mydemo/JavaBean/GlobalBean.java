@@ -90,7 +90,7 @@ public class GlobalBean {
                 case 0:
                     if (msg.obj.toString().equals("wait")) {
                         flag_small.setVisibility(View.GONE);
-                     //   PredictGesture(0, tvDist);
+                       PredictGesture(0, tvDist);
                         PredictGesture(550, tvDist2);
 
 
