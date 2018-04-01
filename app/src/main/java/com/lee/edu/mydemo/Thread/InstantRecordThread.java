@@ -87,7 +87,7 @@ public class InstantRecordThread extends Thread {
                 begin_while++;
             } else if (while_count == 10 && begin_while > 0) {
 
-                SaveData();
+            //    SaveData();
                 while_count = 0;
                 begin_while++;
                 Message msg2 = new Message();
@@ -130,18 +130,6 @@ public class InstantRecordThread extends Thread {
             while (NowPhase < 0) NowPhase += Math.PI * 2;
             while (NowPhase > Math.PI * 2) NowPhase -= Math.PI * 2;
 
-            Message msg1 = new Message();
-            msg1.what = 1;
-            DecimalFormat df = new DecimalFormat("#.00");
-
-            msg1.obj = (df.format(lastDist));
-            globalBean.mHandler.sendMessage(msg1);
-
-            Message msg2 = new Message();
-            msg2.what = 2;
-
-            msg2.obj = (df.format(lastDistR));
-            globalBean.mHandler.sendMessage(msg2);
         }//while end
 
 

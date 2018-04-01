@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.Manifest;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         Bmob.initialize(this, "9dbc988651cd8b0403a4d8e2566459e9");
         globalBean = new GlobalBean(MainActivity.this);
-        globalBean.ShowChoiseWho();
+
         Init();
 
 
@@ -46,12 +47,8 @@ public class MainActivity extends AppCompatActivity {
         globalBean.btnPlayRecord = (Button) findViewById(R.id.btnplayrecord);
         globalBean.btnStopRecord = (Button) findViewById(R.id.btnstoprecord);
         globalBean.tvDist = (TextView) findViewById(R.id.textView1);
-        globalBean.tvDist.setText(String.valueOf(0));
         globalBean.tvDist2 = (TextView) findViewById(R.id.textView2);
-        globalBean.tvDist2.setText(String.valueOf(0));
-        globalBean.btnQuerycount= (Button) findViewById(R.id.bt_query_count);
-        globalBean.btnSetWhichandWho= (Button) findViewById(R.id.bt_setusername);
-
+        globalBean.flag_small = (ImageView) findViewById(R.id.flag_small);
         globalBean.Init();
     }
 

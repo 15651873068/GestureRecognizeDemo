@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@mipmap/backicon"
+    android:orientation="vertical"
     tools:context="com.lee.edu.mydemo.Activity.MainActivity">
 
     <TextView
@@ -20,66 +20,53 @@
         android:orientation="horizontal">
 
 
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <Button
                 android:id="@+id/btnplayrecord"
-                android:textSize="30dp"
-                android:alpha="0.5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:alpha="0.5"
+                android:text="开始"
                 android:textColor="#008000"
-                android:text="开始" />
+                android:textSize="30dp" />
 
             <Button
                 android:id="@+id/btnstoprecord"
-                android:alpha="0.5"
-                android:textSize="30dp"
-                android:textColor="#008000"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="停止" />
-
-
-            <Button
-                android:layout_marginTop="10dp"
-                android:id="@+id/bt_setusername"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:textColor="#008000"
                 android:alpha="0.5"
-                android:text="设置游戏英雄" />
-
-            <Button
-                android:id="@+id/bt_query_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:alpha="0.5"
+                android:text="停止"
+                android:visibility="gone"
                 android:textColor="#008000"
-                android:text="查询已录条数" />
+                android:textSize="30dp" />
+
         </LinearLayout>
 
 
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal"
+
+        android:id="@+id/flag_small"
+        android:src="@mipmap/flag_small" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal">
-
 
 
         <LinearLayout
@@ -89,25 +76,25 @@
             android:orientation="vertical">
 
             <TextView
-                android:visibility="gone"
+
                 android:id="@+id/textView1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textColor="#FFFFFF"
-                android:text="0.00" />
+                android:text=" "
+                android:textColor="#FFFFFF" />
 
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textColor="#FFFFFF"
-                android:text="0.00" />
+                android:text=" "
+                android:textColor="#FFFFFF" />
+
 
         </LinearLayout>
 
@@ -120,10 +107,10 @@
         android:layout_height="0dp"
         android:layout_weight="0.5" />
 
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textColor="#9370DB"
-    android:layout_gravity="center_horizontal"
-    android:text="Copyright © 2018.03.16 NUAA_Geature"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Copyright © 2018.03.16 NUAA_Geature"
+        android:textColor="#9370DB" />
 </LinearLayout>

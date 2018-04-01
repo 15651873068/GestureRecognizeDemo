@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion '27.0.3'
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.lee.edu.mydemo"
@@ -11,6 +11,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            moduleName "gesturencnn"
+            stl "stlport_static"
+            abiFilters 'armeabi-v7a'
+        }
         externalNativeBuild {
             cmake {
                 cppFlags ""
@@ -22,6 +27,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    sourceSets.main {
+        jniLibs.srcDirs = ["src/main/libs"]
+        jni.srcDirs = []
     }
     externalNativeBuild {
         cmake {

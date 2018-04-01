@@ -1,36 +1,32 @@
 package com.lee.edu.mydemo.JavaBean;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.drawable.ColorDrawable;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lee.edu.mydemo.Activity.MainActivity;
-import com.lee.edu.mydemo.R;
 import com.lee.edu.mydemo.Thread.InstantPlayThread;
 import com.lee.edu.mydemo.Thread.InstantRecordThread;
 import com.lee.edu.mydemo.Utils.FrequencyPlayerUtils;
+import com.lee.edu.mydemo.Utils.SqueezeNcnn;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
 
 /**
  * Created by dmrf on 18-3-15.
@@ -53,6 +49,9 @@ public class GlobalBean {
     public int sampleRateInHz = 44100;//采样率（默认44100，每秒44100个点）
     public int recBufSize = 4400;            //定义录音片长度
     public int numfre = 8;
+    public char[] CODE = {'A', 'B', 'C', 'J', 'K', 'F', 'G', 'L', 'M', 'N', 'O', 'H', 'I'};
+    public float[] scores = new float[13];
+    public int[] len_i = new int[2];
 
 
     /*
@@ -62,8 +61,8 @@ public class GlobalBean {
     public Button btnStopRecord;        //结束按钮
     public TextView tvDist;            //显示距离
     public TextView tvDist2;            //显示距离
-    public Button btnSetWhichandWho;
-    public Button btnQuerycount;
+    public ImageView flag_small;
+
     public int is_in_count = -1;
 
     /*
@@ -72,9 +71,12 @@ public class GlobalBean {
     public boolean flag = true;        //播放标志
     public ArrayList<Double> L_I[];
     public ArrayList<Double> L_Q[];
-    public String whoandwhich = "";
+
+
+    public String whoandwhich = "ncnntest";
 
     private Context context;
+    private SqueezeNcnn squeezeNcnn;
 
 
     @SuppressLint("HandlerLeak")
@@ -86,8 +88,11 @@ public class GlobalBean {
             switch (msg.what) {
                 case 0:
                     if (msg.obj.toString().equals("wait")) {
-                        tvDist.setVisibility(View.GONE);
-                        tvDist2.setVisibility(View.GONE);
+                        flag_small.setVisibility(View.GONE);
+                     //   PredictGesture(0, tvDist);
+                        PredictGesture(550, tvDist2);
+
+
                         for (int i = 0; i < 8; i++) {
                             L_I[i].clear();
                             L_Q[i].clear();
@@ -96,8 +101,10 @@ public class GlobalBean {
                     } else if (msg.obj.toString().equals("start")) {
                         tvDist.setVisibility(View.VISIBLE);
                         tvDist2.setVisibility(View.VISIBLE);
+                        flag_small.setVisibility(View.VISIBLE);
                         Start();
                     } else if (msg.obj.toString().equals("stop")) {
+                        flag_small.setVisibility(View.GONE);
 
                         btnPlayRecord.setVisibility(View.VISIBLE);
 
@@ -122,11 +129,55 @@ public class GlobalBean {
     };
 
 
+    private void PredictGesture(int a, TextView textView) {//第一个a为0，第二个a为550
+
+        float data_i[] = new float[4400];
+        float data_q[] = new float[4400];
+        len_i[0] = 4400;
+
+        int k = 0;
+        int b = a + 550;
+        for (int i = 0; i < 8; i++) {
+            for (int j = a; j < b; j++) {
+                data_i[k] = L_I[i].get(j).floatValue();
+                data_q[k] = L_Q[i].get(j).floatValue();
+                k++;
+            }
+        }
+
+
+        squeezeNcnn.Detect(data_i, data_q, scores, len_i);
+
+        float max = scores[0];
+        int max_index = 0;
+        for (int i = 1; i < 13; i++) {
+            if (scores[i] > max) {
+                max = scores[i];
+                max_index = i;
+            }
+        }
+
+        textView.setText(CODE[max_index] + ":" + max);
+
+    }
+
     public GlobalBean(Context context) {
         this.context = context;
     }
 
     public void Init() {
+        try {
+            InitSqueezeNcnn();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("MM_dd");
+        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+        final String day = formatter.format(curDate);
+        whoandwhich = whoandwhich + "_" + day;
+
+
         L_I = new ArrayList[8];
         L_Q = new ArrayList[8];
 
@@ -189,58 +240,11 @@ public class GlobalBean {
             @Override
             public void onClick(View v) {
                 // TODO 自动生成的方法存根
-//
-//                btnPlayRecord.setVisibility(View.VISIBLE);
-//
-//                btnStopRecord.setVisibility(View.GONE);
-//
-//                tvDist.setVisibility(View.GONE);
-//                tvDist2.setVisibility(View.GONE);
-//                FPlay.colseWaveZ();
-//                audioRecord.stop();
-//                flag = false;
+
             }
         });
 
-        btnQuerycount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btnQuerycount.setText("查询中.......");
-                if (whoandwhich.equals("")) {
-                    Toast.makeText(context, "不告诉我你是谁我怎么怎么帮你查！", Toast.LENGTH_SHORT).show();
-                    btnQuerycount.setText("查询已录条数");
-                    return;
-                } else {
 
-                    if (is_in_count != -1) {
-                        Toast.makeText(context, "已录入" + is_in_count + "条数据", Toast.LENGTH_SHORT).show();
-                    } else {
-                        BmobQuery<DataBean> bmobQuery = new BmobQuery<DataBean>();
-                        bmobQuery.addWhereEqualTo("whoandwhich", whoandwhich);
-                        bmobQuery.findObjects(new FindListener<DataBean>() {
-                            @Override
-                            public void done(List<DataBean> list, BmobException e) {
-                                if (e == null) {
-                                    Toast.makeText(context, "已录入" + list.size() + "条数据", Toast.LENGTH_SHORT).show();
-
-                                } else {
-                                    Toast.makeText(context, "查询数据失败，请联系最帅的人查找bug～", Toast.LENGTH_SHORT).show();
-                                }
-                                btnQuerycount.setText("查询已录条数");
-                            }
-                        });
-                    }
-                }
-            }
-        });
-
-        btnSetWhichandWho.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                whoandwhich = "";
-                ShowChoiseWho();
-            }
-        });
     }
 
 
@@ -262,34 +266,6 @@ public class GlobalBean {
     }
 
 
-    public void ShowChoiseWho() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, android.R.style.Theme_Holo_Light_Dialog);
-        //builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle("设置玩家姓名");
-        //    指定下拉列表的显示数据
-        final String[] names = {"王jun玙", "历傲然", "蔡益武", "李珍岩", "张玉麟", "薛方岗","Try"};
-        final String[] codes = {"wangjunyu", "liaoran", "caiyiwu", "lizhenyan", "zhangyulin", "xuefanggang","try"};
-        SimpleDateFormat formatter = new SimpleDateFormat("MM_dd");
-        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
-        final String day = formatter.format(curDate);
-
-        //    设置一个下拉的列表选择项
-        builder.setItems(names, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                whoandwhich = codes[which] + "_" + day;
-                ShowChoiseWhich();
-            }
-        });
-        AlertDialog alertDialog = builder.create();
-        final Window window = alertDialog.getWindow();
-        window.setBackgroundDrawable(new ColorDrawable(0));
-        alertDialog.show();
-    }
-
-
     private void Start() {
         if (L_I[0] != null) {
             for (int i = 0; i < 8; i++) {
@@ -302,29 +278,55 @@ public class GlobalBean {
 
     }
 
-    private void ShowChoiseWhich() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, android.R.style.Theme_Holo_Light_Dialog);
-        //builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle("设置游戏英雄");
-
-        //    指定下拉列表的显示数据
-        final String[] names = {"Click", "Flip", "Circle", "Grab", "Release"};
-        final String[] name_code = {"F", "G", "H", "I", "J"};
-        //    设置一个下拉的列表选择项
-        builder.setItems(names, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+    private void InitSqueezeNcnn() throws IOException {
 
 
-                Toast.makeText(context, "choose:" + whoandwhich + "_" + names[which], Toast.LENGTH_SHORT).show();
-                whoandwhich = whoandwhich + "_" + name_code[which];
-            }
-        });
-        AlertDialog alertDialog = builder.create();
-        final Window window = alertDialog.getWindow();
-        window.setBackgroundDrawable(new ColorDrawable(0));
-        alertDialog.show();
+        squeezeNcnn = new SqueezeNcnn();
+
+
+        try {
+            copyBigDataToSD("gesture.bin");
+
+            copyBigDataToSD("gesture.param");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //模型初始化
+        File sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+        String sdPath = sdDir.toString() + "/gesturencnn/";
+        boolean b = squeezeNcnn.InitNcnn(sdPath);
+
     }
+
+
+    private void copyBigDataToSD(String strOutFileName) throws IOException {
+
+        File sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+        File file = new File(sdDir.toString() + "/gesturencnn/");
+        if (!file.exists()) {
+            file.mkdir();
+        }
+
+        String tmpFile = sdDir.toString() + "/gesturencnn/" + strOutFileName;
+        File f = new File(tmpFile);
+        if (f.exists()) {
+            return;
+        }
+        InputStream myInput;
+        java.io.OutputStream myOutput = new FileOutputStream(sdDir.toString() + "/gesturencnn/" + strOutFileName);
+        myInput = context.getAssets().open(strOutFileName);
+        byte[] buffer = new byte[1024];
+        int length = myInput.read(buffer);
+        while (length > 0) {
+            myOutput.write(buffer, 0, length);
+            length = myInput.read(buffer);
+        }
+        myOutput.flush();
+        myInput.close();
+        myOutput.close();
+
+    }
+
 
 }
