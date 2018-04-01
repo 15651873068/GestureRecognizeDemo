@@ -64,6 +64,7 @@ public class GlobalBean {
     public ImageView flag_small;
 
     public int is_in_count = -1;
+    public int gesture_length=1100;
 
     /*
     variable

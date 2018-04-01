@@ -75,7 +75,9 @@ public class InstantRecordThread extends Thread {
             if (begin_while > 0) {
                 globalBean.AddDataToList(globalBean.L_I, tempIIL);
                 globalBean.AddDataToList(globalBean.L_Q, tempQQL);
+
             }
+
 
             if (while_count == 5 && begin_while == 0) {
                 Message msg3 = new Message();
@@ -85,7 +87,7 @@ public class InstantRecordThread extends Thread {
                 globalBean.mHandler.sendMessage(msg3);
                 while_count = 0;
                 begin_while++;
-            } else if (while_count == 10 && begin_while > 0) {
+            } else if (while_count == 20 && begin_while > 0) {
 
             //    SaveData();
                 while_count = 0;
